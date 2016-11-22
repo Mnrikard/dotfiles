@@ -3,3 +3,25 @@
 	email = mnrikard@gmail.com
 [push]
 	default = matching
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	ui = true
+	pager = true
+[core]
+	editor = vim
+	autocrlf = false
+[merge]
+	tool = gvimdiff
+	conflictstyle = diff3
+[mergetool "kdiff3"]
+    path = C:/Program Files/KDiff3/kdiff3.exe
+    keepBackup = false
+	trustExitCode = false
+[diff]
+	tool = gvimdiff
+	conflictstyle = diff2
+[difftool "kdiff3"]
+    path = C:/Program Files/KDiff3/kdiff3.exe

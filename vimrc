@@ -203,8 +203,8 @@ syntax sync minlines=1000
 		endif
 
 		execute 'normal! m0'
-		execute 'normal! :%s/\v<'.@@.'>/'.toname."/g<C-v><cr>"
-		execute "normal! `0\<cr>"
+		echom ':%s/\v<'.@@.'>/'.toname."/g" . expand("<cr>")<cr>
+		execute "normal! `0"
 		let @@ = savedReg
 	endfunction
 
