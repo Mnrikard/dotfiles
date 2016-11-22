@@ -1,5 +1,6 @@
 set nocompatible
-
+scriptencoding utf-8
+set encoding=utf-8
 "VundleSection{{{
 	filetype off
 	" set the runtime path to include Vundle and initialize
@@ -26,15 +27,17 @@ set nocompatible
 	Plugin 'tpope/vim-vividchalk'
 	Plugin 'kien/ctrlp.vim'
 	Plugin 'easymotion/vim-easymotion'
-	Plugin 'adamclerk/vim-razor'
+	Plugin 'scrooloose/nerdtree'
+	Plugin 'vim-airline/vim-airline-themes'
+	Plugin 'OrangeT/vim-csharp'
 
 	call vundle#end()            " required
 	filetype plugin indent on    " required
 "}}}
 
 "PluginSettings{{{
+	"OmniSharp {{{
 	let g:OmniSharp_server_type = 'roslyn'
-	let g:OmniSharp_selector_ui = 'unite'
 	let g:OmniSharp_host = "http://localhost:2000"
 	"Set the type lookup function to use the preview window instead of the status line
 	let g:OmniSharp_typeLookupInPreview = 0
@@ -91,7 +94,8 @@ set nocompatible
 
 	" Add syntax highlighting for types and interfaces
 	nnoremap <leader>th :OmniSharpHighlightTypes<cr>
-
+	"}}}
+	
 	let g:xml_syntax_folding=1
 	au FileType xml,xsl,xslt,html,razor setlocal foldmethod=syntax
 	set statusline+=%{fugitive#statusline()}
@@ -104,7 +108,8 @@ set nocompatible
 		let g:syntastic_auto_loc_list = 2
 		let g:syntastic_check_on_open = 1
 		let g:syntastic_check_on_wq = 0
-		let g:syntastic_cs_checkers = ["code_checker","issues","semantic","syntax"]
+"		let g:syntastic_cs_checkers = ["code_checker","issues","semantic","syntax"]
+		let g:syntastic_cs_checkers = ['code_checker']	
 	"}}}
 "}}}
 
@@ -155,16 +160,16 @@ set nocompatible
 	nnoremap <Leader>o i<Enter><Esc>
 	nnoremap <C-s> :w<Enter>
 	nnoremap <Leader>p "0p
-	nnoremap <C-S-p> "+pl
-	inoremap <C-S-p> <Esc>"+pli
 	nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 	nnoremap <leader>sv :source $MYVIMRC<cr>
 	inoremap jjk <Esc>
-	nnoremap <leader>kd execute "normal! gg=G"
+	nnoremap <leader>kd :execute "normal! mhgg=G<C-v><cr>`h"<cr>
 	inoremap wwh <Esc>:wincmd W<cr>
 	nnoremap wwh :wincmd W<cr>
 	nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 	nnoremap <leader>rr :set operatorfunc=Refactor<cr>g@
+	nnoremap <leader>ll viwgu
+	nnoremap <leader>uu viwgU
 "}}}
 
 "AutoCmd{{{
@@ -174,6 +179,9 @@ augroup myAutoCmds
 	autocmd BufEnter * syntax sync minlines=1000
 	autocmd FileType vim setlocal foldmethod=marker
 	autocmd FileType vim setlocal foldlevel=0
+	autocmd FileType markdown setlocal nonumber
+	autocmd FileType markdown setlocal wrap
+	autocmd FileType markdown setlocal colorcolumn=80
 augroup end
 "}}}
 
@@ -195,13 +203,14 @@ syntax sync minlines=1000
 		endif
 
 		execute 'normal! m0'
-		execute 'normal! :%s/\v<'.@@.'>/'.toname."/g\<cr>"
+		execute 'normal! :%s/\v<'.@@.'>/'.toname."/g<C-v><cr>"
 		execute "normal! `0\<cr>"
 		let @@ = savedReg
 	endfunction
 
 	command! Nom execute "%s///g"
 	command! BM execute "bufdo | bd!"
+	command! BD execute "bp | sp | bn | bd"
 
 	function! MoveLine(lnum)
 		let currline=line('.')
@@ -219,6 +228,8 @@ syntax sync minlines=1000
 		let currline=line('.')
 		execute "m" currline+1
 	endfunction
+
+	command! Paste execute 'normal! "+p'."<C-v><cr>"
 
 	command! -nargs=1 M execute "call MoveLine(<args>)"
 	command! -nargs=0 Md execute "call MoveLineDown()"
