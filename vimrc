@@ -109,7 +109,8 @@ set encoding=utf-8
 		let g:syntastic_check_on_open = 1
 		let g:syntastic_check_on_wq = 0
 "		let g:syntastic_cs_checkers = ["code_checker","issues","semantic","syntax"]
-		let g:syntastic_cs_checkers = ['code_checker']	
+		let g:syntastic_cs_checkers = ['code_checker']
+		let g:syntastic_js_checkers = ['code_checker']
 	"}}}
 "}}}
 
@@ -170,6 +171,9 @@ set encoding=utf-8
 	nnoremap <leader>rr :set operatorfunc=Refactor<cr>g@
 	nnoremap <leader>ll viwgu
 	nnoremap <leader>uu viwgU
+	inoremap { {<cr>}<Esc>kA
+	inoremap [ []<Esc>i
+	nnoremap L L10j10k
 "}}}
 
 "AutoCmd{{{
