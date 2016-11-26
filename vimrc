@@ -177,7 +177,9 @@ set encoding=utf-8
 	nnoremap <leader>rt :OmniSharpRunTests<cr>
 	inoremap { {<cr>}<Esc>kA
 	inoremap :www <Esc>:w<cr>
-	map Q <nop>
+	nnoremap Q <nop>
+	nnoremap L L10j10k
+	nnoremap H H10k10j
 "}}}
 
 "AutoCmd{{{
