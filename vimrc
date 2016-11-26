@@ -95,7 +95,12 @@ set encoding=utf-8
 	" Add syntax highlighting for types and interfaces
 	nnoremap <leader>th :OmniSharpHighlightTypes<cr>
 	"}}}
-	
+	"Airline {{{
+	let g:airline#extensions#tabline#enabled = 1
+	let g:airline_left_sep='>'
+	let g:airline_right_sep='<'
+	let g:airline_theme='hybrid'
+	"}}}
 	let g:xml_syntax_folding=1
 	au FileType xml,xsl,xslt,html,razor setlocal foldmethod=syntax
 	set statusline+=%{fugitive#statusline()}
@@ -153,12 +158,11 @@ set encoding=utf-8
 	nnoremap <C-J> a<CR><Esc>k$
 	nnoremap <leader>nl o<Esc>
 	vnoremap <C-c> "+y
-	nnoremap <C-tab> :bn<Enter>
-	nnoremap <C-S-tab> :bprev<Enter>
-	nnoremap <C-s> :w<Enter>
-	inoremap <C-s> <Esc>:w<Enter>i
-	nnoremap <Leader>o i<Enter><Esc>
-	nnoremap <C-s> :w<Enter>
+	nnoremap <C-tab> :bn<cr>
+	nnoremap <C-S-tab> :bprev<cr>
+	noremap <C-s> :w<cr>
+	nnoremap <Leader>o i<cr><Esc>
+	nnoremap <C-s> :w<cr>
 	nnoremap <Leader>p "0p
 	nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 	nnoremap <leader>sv :source $MYVIMRC<cr>
@@ -170,6 +174,10 @@ set encoding=utf-8
 	nnoremap <leader>rr :set operatorfunc=Refactor<cr>g@
 	nnoremap <leader>ll viwgu
 	nnoremap <leader>uu viwgU
+	nnoremap <leader>rt :OmniSharpRunTests<cr>
+	inoremap { {<cr>}<Esc>kA
+	inoremap :www <Esc>:w<cr>
+	map Q <nop>
 "}}}
 
 "AutoCmd{{{
@@ -211,6 +219,8 @@ syntax sync minlines=1000
 	command! Nom execute "%s///g"
 	command! BM execute "bufdo | bd!"
 	command! BD execute "bp | sp | bn | bd"
+	command! Mid execute "normal! m020j`0"
+	command! SA execute "bufdo w"
 
 	function! MoveLine(lnum)
 		let currline=line('.')
@@ -229,7 +239,7 @@ syntax sync minlines=1000
 		execute "m" currline+1
 	endfunction
 
-	command! Paste execute 'normal! "+p'."<C-v><cr>"
+	command! Pst execute 'normal! "+p'
 
 	command! -nargs=1 M execute "call MoveLine(<args>)"
 	command! -nargs=0 Md execute "call MoveLineDown()"
