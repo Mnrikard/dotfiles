@@ -15,21 +15,29 @@ set encoding=utf-8
 	Plugin 'VundleVim/Vundle.vim'
 
 	"plugin on GitHub repo
-	Plugin 'tpope/vim-fugitive'
-	Plugin 'leafgarland/typescript-vim'
-	Plugin 'vim-airline/vim-airline'
-	Plugin 'PProvost/vim-ps1'
-	Plugin 'tpope/vim-dispatch'
-	Plugin 'tpope/vim-surround'
-	Plugin 'scrooloose/syntastic'
-	Plugin 'ervandew/supertab'
-	Plugin 'OmniSharp/Omnisharp-vim'
-	Plugin 'tpope/vim-vividchalk'
-	Plugin 'kien/ctrlp.vim'
 	Plugin 'easymotion/vim-easymotion'
-	Plugin 'scrooloose/nerdtree'
-	Plugin 'vim-airline/vim-airline-themes'
+	Plugin 'ervandew/supertab'
+	Plugin 'kien/ctrlp.vim'
+	Plugin 'leafgarland/typescript-vim'
+	Plugin 'OmniSharp/Omnisharp-vim'
 	Plugin 'OrangeT/vim-csharp'
+	Plugin 'PProvost/vim-ps1'
+	Plugin 'scrooloose/nerdtree'
+	Plugin 'scrooloose/syntastic'
+	Plugin 'tpope/vim-dispatch'
+	Plugin 'tpope/vim-fugitive'
+	Plugin 'tpope/vim-surround'
+	Plugin 'tpope/vim-vividchalk'
+	Plugin 'vim-airline/vim-airline'
+	Plugin 'vim-airline/vim-airline-themes'
+	Plugin 'MarcWeber/vim-addon-mw-utils'
+	Plugin 'tomtom/tlib_vim'
+	Plugin 'garbas/vim-snipmate'
+	Plugin 'valloric/matchtagalways'
+	Plugin 'altercation/vim-colors-solarized'
+	Plugin 'tpope/vim-repeat'
+	" Optional:
+	"   Plugin 'honza/vim-snippets'
 
 	call vundle#end()            " required
 	filetype plugin indent on    " required
@@ -37,66 +45,68 @@ set encoding=utf-8
 
 "PluginSettings{{{
 	"OmniSharp {{{
-	let g:OmniSharp_server_type = 'roslyn'
-	let g:OmniSharp_host = "http://localhost:2000"
-	"Set the type lookup function to use the preview window instead of the status line
-	let g:OmniSharp_typeLookupInPreview = 0
-	"Timeout in seconds to wait for a response from the server
-	let g:OmniSharp_timeout = 1
-	set noshowmatch
+	if(has("python") || has("python3"))
+		let g:OmniSharp_server_type = 'roslyn'
+		let g:OmniSharp_host = "http://localhost:2000"
+		"Set the type lookup function to use the preview window instead of the status line
+		let g:OmniSharp_typeLookupInPreview = 0
+		"Timeout in seconds to wait for a response from the server
+		let g:OmniSharp_timeout = 1
+		set noshowmatch
 
-	let g:SuperTabDefaultCompletionType = 'context'
-	let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
-	let g:SuperTabDefaultCompletionTypeDiscovery = ["&omnifunc:<c-x><c-o>","&completefunc:<c-x><c-n>"]
-	let g:SuperTabClosePreviewOnPopupClose = 1
-	set completeopt=longest,menuone,preview
-	set splitbelow
+		let g:SuperTabDefaultCompletionType = 'context'
+		let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
+		let g:SuperTabDefaultCompletionTypeDiscovery = ["&omnifunc:<c-x><c-o>","&completefunc:<c-x><c-n>"]
+		let g:SuperTabClosePreviewOnPopupClose = 1
+		set completeopt=longest,menuone,preview
+		set splitbelow
 
-	augroup omnisharp_commands
-		autocmd!
+		augroup omnisharp_commands
+			autocmd!
 
-		"Set autocomplete function to OmniSharp (if not using YouCompleteMe completion plugin)
-		autocmd FileType cs,razor setlocal omnifunc=OmniSharp#Complete
+			"Set autocomplete function to OmniSharp (if not using YouCompleteMe completion plugin)
+			autocmd FileType cs,razor setlocal omnifunc=OmniSharp#Complete
 
-		" Synchronous build (blocks Vim)
-		"autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
-		" Builds can also run asynchronously with vim-dispatch installed
-		autocmd FileType cs nnoremap <leader>b :wa!<cr>:OmniSharpBuildAsync<cr>
-		" automatic syntax check on events (TextChanged requires Vim 7.4)
-		autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
+			" Synchronous build (blocks Vim)
+			"autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
+			" Builds can also run asynchronously with vim-dispatch installed
+			autocmd FileType cs nnoremap <leader>b :wa!<cr>:OmniSharpBuildAsync<cr>
+			" automatic syntax check on events (TextChanged requires Vim 7.4)
+			autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
 
-		" Automatically add new cs files to the nearest project on save
-		"autocmd BufWritePost *.cs call OmniSharp#AddToProject()
+			" Automatically add new cs files to the nearest project on save
+			"autocmd BufWritePost *.cs call OmniSharp#AddToProject()
 
-		"show type information automatically when the cursor stops moving
-		autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+			"show type information automatically when the cursor stops moving
+			autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
 
-		"The following commands are contextual, based on the current cursor position.
+			"The following commands are contextual, based on the current cursor position.
 
-		autocmd FileType cs nnoremap gd :OmniSharpGotoDefinition<cr>
-		autocmd FileType cs nnoremap <leader>fi :OmniSharpFindImplementations<cr>
-		autocmd FileType cs nnoremap <leader>ft :OmniSharpFindType<cr>
-		autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
-		autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
-		"finds members in the current buffer
-		autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr>
-		" cursor can be anywhere on the line containing an issue
-		autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
-		autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
-		autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
-		autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
-		"navigate up by method/property/field
-		autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr>
-		"navigate down by method/property/field
-		autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
-	augroup end 
-	set updatetime=500
+			autocmd FileType cs nnoremap gd :OmniSharpGotoDefinition<cr>
+			autocmd FileType cs nnoremap <leader>fi :OmniSharpFindImplementations<cr>
+			autocmd FileType cs nnoremap <leader>ft :OmniSharpFindType<cr>
+			autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
+			autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
+			"finds members in the current buffer
+			autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr>
+			" cursor can be anywhere on the line containing an issue
+			autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
+			autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
+			autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
+			autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
+			"navigate up by method/property/field
+			autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr>
+			"navigate down by method/property/field
+			autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
+		augroup end 
+		set updatetime=500
 
-	" Add syntax highlighting for types and interfaces
-	nnoremap <leader>th :OmniSharpHighlightTypes<cr>
+		" Add syntax highlighting for types and interfaces
+		nnoremap <leader>th :OmniSharpHighlightTypes<cr>
+	endif
 	"}}}
 	"Airline {{{
-	let g:airline#extensions#tabline#enabled = 1
+	"let g:airline#extensions#tabline#enabled = 1
 	let g:airline_left_sep='>'
 	let g:airline_right_sep='<'
 	let g:airline_theme='hybrid'
@@ -114,8 +124,17 @@ set encoding=utf-8
 		let g:syntastic_check_on_open = 1
 		let g:syntastic_check_on_wq = 0
 "		let g:syntastic_cs_checkers = ["code_checker","issues","semantic","syntax"]
-		let g:syntastic_cs_checkers = ['code_checker']
+		let g:syntastic_cs_checkers = ['code_checker',"syntax"]
 		let g:syntastic_js_checkers = ['code_checker']
+	"}}}
+	"dbext{{{
+	let g:dbext_default_profile_ProdClientInt = 'type=SQLSRV:integratedlogin=1:srvname=ProdDb3Sup\ProdDb3Sup:dbname=ClientInterfaces:port=1757'
+	let g:dbext_default_profile_ProdEquestPlus = 'type=SQLSRV:integratedlogin=1:srvname=DBCluster2:dbname=EquestPlus'
+	let g:dbext_default_profile_Dev2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3Sup:dbname=ClientInterfaces'
+	let g:dbext_default_profile_Dev2EquestPlus = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3:dbname=EquestPlus'
+	let g:dbext_default_profile_Model2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3Sup:dbname=ClientInterfaces'
+	let g:dbext_default_profile_Model2EquestPlus = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3:dbname=EquestPlus'
+	"let g:dbext_default_profile_Dev2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3Sup:dbname=ClientInterfaces'
 	"}}}
 "}}}
 
@@ -151,17 +170,26 @@ set encoding=utf-8
 	let mapleader=" "
 	set encoding=utf8
 	set laststatus=2
-	colorscheme vividchalk
+	set complete=.,w,b,u,t,i,kspell
+	set splitright
+	set splitbelow
+
+	if has('gui_running')
+		set guioptions-=T  " no toolbar
+		colorscheme solarized
+	else
+		colorscheme vividchalk
+	endif
 "}}}
 
 "Maps{{{
 	nnoremap <C-L> :nohl<CR><C-L>
-	nnoremap <C-J> a<CR><Esc>k$
 	nnoremap <leader>nl o<Esc>
 	vnoremap <C-c> "+y
 	nnoremap <C-tab> :bn<cr>
 	nnoremap <C-S-tab> :bprev<cr>
-	noremap <C-s> :w<cr>
+	nnoremap <C-s> :w<cr>
+	inoremap <C-s> <Esc>:w<cr>a
 	nnoremap <Leader>o i<cr><Esc>
 	nnoremap <C-s> :w<cr>
 	nnoremap <Leader>p "0p
@@ -169,8 +197,7 @@ set encoding=utf-8
 	nnoremap <leader>sv :source $MYVIMRC<cr>
 	inoremap jjk <Esc>
 	nnoremap <leader>kd :execute "normal! mhgg=G<C-v><cr>`h"<cr>
-	inoremap wwh <Esc>:wincmd W<cr>
-	nnoremap wwh :wincmd W<cr>
+	nnoremap <leader>wh :wincmd W<cr>
 	nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 	nnoremap <leader>rr :set operatorfunc=Refactor<cr>g@
 	nnoremap <leader>ll viwgu
@@ -182,6 +209,14 @@ set encoding=utf-8
 	nnoremap Q <nop>
 	nnoremap L L10j10k
 	nnoremap H H10k10j
+	nnoremap <leader>nt :NERDTreeToggle<cr>
+	nnoremap <leader>cdh :cd %:p:h<cr>
+	inoremap [] []<Esc>i
+
+	inoremap <Left> <Esc>h
+	inoremap <Right> <Esc>l
+	inoremap <Up> <Esc>k
+	inoremap <Down> <Esc>j
 "}}}
 
 "AutoCmd{{{
@@ -194,6 +229,8 @@ augroup myAutoCmds
 	autocmd FileType markdown setlocal nonumber
 	autocmd FileType markdown setlocal wrap
 	autocmd FileType markdown setlocal colorcolumn=80
+	autocmd FileType markdown setlocal spell
+	autocmd FileType markdown setlocal foldcolumn=12
 augroup end
 "}}}
 
@@ -224,6 +261,7 @@ syntax sync minlines=1000
 	command! BM execute "bufdo | bd!"
 	command! BD execute "bp | sp | bn | bd"
 	command! SA execute "bufdo w"
+	command! SAC execute 'normal! ggVG"+y'
 
 	function! MoveLine(lnum)
 		let currline=line('.')
