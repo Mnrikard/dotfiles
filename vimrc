@@ -139,6 +139,16 @@ set encoding=utf-8
 "}}}
 
 "Sets{{{
+
+	if has("win32")
+		set shell=cmd.exe
+		set shellcmdflag=/c\ powershell.exe\ -NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned
+		set shellpipe=|
+		set shellredir=>
+	else
+		set shell=/bin/bash
+	endif
+	set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI:qDRAFT
 	set whichwrap+=<,>,[,]
 	set hidden
 	set confirm
@@ -154,7 +164,7 @@ set encoding=utf-8
 	set ruler
 	set laststatus=1
 	set confirm
-	set mouse=a
+	"set mouse=a
 	set cmdheight=2
 	set number
 	set notimeout ttimeout ttimeoutlen=200
@@ -183,6 +193,7 @@ set encoding=utf-8
 "}}}
 
 "Maps{{{
+	nnoremap <C-S-j> a<CR><Esc>kA<Esc>
 	nnoremap <C-L> :nohl<CR><C-L>
 	nnoremap <leader>nl o<Esc>
 	vnoremap <C-c> "+y
@@ -202,9 +213,7 @@ set encoding=utf-8
 	nnoremap <leader>rr :set operatorfunc=Refactor<cr>g@
 	nnoremap <leader>ll viwgu
 	nnoremap <leader>uu viwgU
-	inoremap { {<cr>}<Esc>kA
 	nnoremap <leader>rt :OmniSharpRunTests<cr>
-	inoremap { {<cr>}<Esc>kA
 	inoremap :www <Esc>:w<cr>
 	nnoremap Q <nop>
 	nnoremap L L10j10k
@@ -231,6 +240,7 @@ augroup myAutoCmds
 	autocmd FileType markdown setlocal colorcolumn=80
 	autocmd FileType markdown setlocal spell
 	autocmd FileType markdown setlocal foldcolumn=12
+	autocmd FileType cs,javascript inoremap <buffer> { {<cr>}<Esc>kA
 augroup end
 "}}}
 
@@ -242,7 +252,6 @@ syntax sync minlines=1000
 		let toname=input('New Name:')
 
 		let savedReg = @@
-		echo a:type
 		if a:type  ==# 'v'
 			normal! y
 		elseif a:type ==# 'char' || a:type ==# 'line'
@@ -252,7 +261,7 @@ syntax sync minlines=1000
 		endif
 
 		execute 'normal! m0'
-		echom ':%s/\v<'.@@.'>/'.toname."/g" . expand("<cr>")<cr>
+		execute ':%s/\v<'.@@.'>/'.toname."/g" . expand("<cr>")
 		execute "normal! `0"
 		let @@ = savedReg
 	endfunction
