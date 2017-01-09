@@ -141,12 +141,14 @@ set encoding=utf-8
 "Sets{{{
 
 	if has("win32")
-		set shell=cmd.exe
-		set shellcmdflag=/c\ powershell.exe\ -NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned
+		set shell=powershell
+		set shellcmdflag=-NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned\ -c
 		set shellpipe=|
 		set shellredir=>
+		set shellquote=\"
+		set shellxquote=
 	else
-		set shell=/bin/bash
+		set shell=/bin/zsh
 	endif
 	set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI:qDRAFT
 	set whichwrap+=<,>,[,]

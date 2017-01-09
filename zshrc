@@ -1,8 +1,40 @@
+
+alias gadd="git add -A"
+alias -g gcomm="git commit"
+alias gfetch="git fetch -p"
+alias gstat="git status"
+
+function gpush {
+	branch=`git rev-parse --abbrev-ref HEAD`
+	git push origin $branch
+}
+
+function gpull {
+	branch=`git rev-parse --abbrev-ref HEAD`
+	git pull origin $branch
+}
+
+function browse {
+	base=`git remote -v | grep \(fetch\)`
+	base=${base/origin/}
+	base=${base/\(fetch\)/}
+	base=`echo $base | sed 's/:\(\w\)/\/\1/g' | sed 's/\.git//g' | sed 's/git@/https:\/\//g' | xargs`
+	branch=`git rev-parse --abbrev-ref HEAD`
+
+	url="$base/tree/$branch/"
+
+	echo $url
+
+	if [ `uname -o` = "Cygwin" ]; then
+		cygstart $url
+	fi
+}
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/rugg/.oh-my-zsh
+export ZSH=~/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -83,3 +115,4 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+#:
