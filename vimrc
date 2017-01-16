@@ -154,6 +154,7 @@ set encoding=utf-8
 	set whichwrap+=<,>,[,]
 	set hidden
 	set confirm
+	set wildmode=longest,list,full
 	set wildmenu
 	set wildignore+=~*,*.png,*.jpg,*.exe,*.dll,*.swp
 	set showcmd
@@ -185,6 +186,7 @@ set encoding=utf-8
 	set complete=.,w,b,u,t,i,kspell
 	set splitright
 	set splitbelow
+	set visualbell
 
 	if has('gui_running')
 		set guioptions-=T  " no toolbar
@@ -268,6 +270,13 @@ syntax sync minlines=1000
 		let @@ = savedReg
 	endfunction
 
+	function! DropCurrentBuffer()
+		" drops the current buffer without closing window"
+		let cbuf=bufnr('%')
+		execute 'bp'
+		execute "bd ".cbuf
+	endfunction
+
 	command! Nom execute "%s///g"
 	command! BM execute "bufdo | bd!"
 	command! BD execute "bp | sp | bn | bd"
@@ -296,4 +305,5 @@ syntax sync minlines=1000
 	command! -nargs=1 M execute "call MoveLine(<args>)"
 	command! -nargs=0 Md execute "call MoveLineDown()"
 	command! -nargs=0 Mu execute "call MoveLineUp()"
+	command! -nargs=0 BD execute "call DropCurrentBuffer()"
 "}}}
