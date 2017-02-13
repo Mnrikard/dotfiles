@@ -19,7 +19,9 @@ set encoding=utf-8
 	Plugin 'ervandew/supertab'
 	Plugin 'kien/ctrlp.vim'
 	Plugin 'leafgarland/typescript-vim'
-	Plugin 'OmniSharp/Omnisharp-vim'
+	if (v:servername ==? "VIMSTUDIO")
+		Plugin 'OmniSharp/Omnisharp-vim'
+	endif
 	Plugin 'OrangeT/vim-csharp'
 	Plugin 'PProvost/vim-ps1'
 	Plugin 'scrooloose/nerdtree'
@@ -45,7 +47,7 @@ set encoding=utf-8
 
 "PluginSettings{{{
 	"OmniSharp {{{
-	if(has("python") || has("python3"))
+	if(v:servername ==? "VIMSTUDIO" && (has("python") || has("python3")))
 		let g:OmniSharp_server_type = 'roslyn'
 		let g:OmniSharp_host = "http://localhost:2000"
 		"Set the type lookup function to use the preview window instead of the status line
@@ -107,8 +109,8 @@ set encoding=utf-8
 	"}}}
 	"Airline {{{
 	"let g:airline#extensions#tabline#enabled = 1
-	let g:airline_left_sep='>'
-	let g:airline_right_sep='<'
+	let g:airline_left_sep=nr2char(0xe0b0)
+	let g:airline_right_sep=nr2char(0xe0b2)
 	let g:airline_theme='hybrid'
 	"}}}
 	let g:xml_syntax_folding=1
@@ -141,12 +143,18 @@ set encoding=utf-8
 "Sets{{{
 
 	if has("win32")
-		set shell=powershell
-		set shellcmdflag=-NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned\ -c
-		set shellpipe=|
-		set shellredir=>
-		set shellquote=\"
-		set shellxquote=
+		"set shell=cmd.exe
+		"set shellcmdflag=/c\ powershell.exe\ -NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned
+		"set shellpipe=|
+		"set shellredir=>
+
+		"set shell=powershell
+		"set shellcmdflag=\ -NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned\ -c
+		"set shellpipe=>%s\ 2>&1
+		"set shellredir=>%s\ 2>&1
+		"set shellquote=\ 
+		"set shellxquote=(
+
 	else
 		set shell=/bin/zsh
 	endif
@@ -197,10 +205,12 @@ set encoding=utf-8
 "}}}
 
 "Maps{{{
+	vnoremap <C-c> "+y
+	vnoremap <leader>h y:<C-U>let @/="<C-R>=@"<CR>"<CR>:set hls<CR>
+
 	nnoremap <C-S-j> a<CR><Esc>kA<Esc>
 	nnoremap <C-L> :nohl<CR><C-L>
 	nnoremap <leader>nl o<Esc>
-	vnoremap <C-c> "+y
 	nnoremap <C-tab> :bn<cr>
 	nnoremap <C-S-tab> :bprev<cr>
 	nnoremap <C-s> :w<cr>
@@ -237,14 +247,22 @@ augroup myAutoCmds
 	autocmd!
 	autocmd FileType xml,xsl,xslt setlocal foldmethod=syntax
 	autocmd BufEnter * syntax sync minlines=1000
+
 	autocmd FileType vim setlocal foldmethod=marker
 	autocmd FileType vim setlocal foldlevel=0
+
 	autocmd FileType markdown setlocal nonumber
 	autocmd FileType markdown setlocal wrap
 	autocmd FileType markdown setlocal colorcolumn=80
 	autocmd FileType markdown setlocal spell
 	autocmd FileType markdown setlocal foldcolumn=12
+	autocmd FileType markdown setlocal expandtab
+
 	autocmd FileType cs,javascript inoremap <buffer> { {<cr>}<Esc>kA
+
+	autocmd FileType cs setlocal errorformat=%f(%l\\\,%c):\ %m\[
+	autocmd FileType cs setlocal makeprg=msbuild.bat\ /nologo\ /v:q\ /property:GenerateFullPaths=true
+
 augroup end
 "}}}
 
@@ -276,6 +294,7 @@ syntax sync minlines=1000
 		execute 'bp'
 		execute "bd ".cbuf
 	endfunction
+	command! -nargs=0 BD execute "call DropCurrentBuffer()"
 
 	command! Nom execute "%s///g"
 	command! BM execute "bufdo | bd!"
@@ -305,5 +324,4 @@ syntax sync minlines=1000
 	command! -nargs=1 M execute "call MoveLine(<args>)"
 	command! -nargs=0 Md execute "call MoveLineDown()"
 	command! -nargs=0 Mu execute "call MoveLineUp()"
-	command! -nargs=0 BD execute "call DropCurrentBuffer()"
 "}}}

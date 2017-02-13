@@ -3,6 +3,7 @@ alias gadd="git add -A"
 alias -g gcomm="git commit"
 alias gfetch="git fetch -p"
 alias gstat="git status"
+alias gsql="git rm ChangeScripts/*/*/*.sql"
 
 function gpush {
 	branch=`git rev-parse --abbrev-ref HEAD`
@@ -41,6 +42,21 @@ export ZSH=~/.oh-my-zsh
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="matthewrikard"
 
+#POWERLINE_SHOW_GIT_ON_RIGHT="true"
+#POWERLINE_PATH="short"
+#
+#POWERLINE_GIT_CLEAN="✔"
+#POWERLINE_GIT_DIRTY="✘"
+#POWERLINE_GIT_ADDED="%F{green}✚%F{black}"
+#POWERLINE_GIT_MODIFIED="%F{blue}✹%F{black}"
+#POWERLINE_GIT_DELETED="%F{red}✖%F{black}"
+#POWERLINE_GIT_UNTRACKED="%F{yellow}✭%F{black}"
+#POWERLINE_GIT_RENAMED="➜"
+#POWERLINE_GIT_UNMERGED="═"
+#POWERLINE_HIDE_USER_NAME="true"
+#POWERLINE_HIDE_HOST_NAME="true"
+#POWERLINE_SHOW_GIT_ON_RIGHT="false"
+#
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
