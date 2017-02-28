@@ -15,31 +15,32 @@ set encoding=utf-8
 	Plugin 'VundleVim/Vundle.vim'
 
 	"plugin on GitHub repo
-	Plugin 'easymotion/vim-easymotion'
-	Plugin 'ervandew/supertab'
-	Plugin 'kien/ctrlp.vim'
-	Plugin 'leafgarland/typescript-vim'
 	if (v:servername ==? "VIMSTUDIO")
 		Plugin 'OmniSharp/Omnisharp-vim'
 	endif
+	Plugin 'MarcWeber/vim-addon-mw-utils'
 	Plugin 'OrangeT/vim-csharp'
 	Plugin 'PProvost/vim-ps1'
+	Plugin 'altercation/vim-colors-solarized'
+	" Plugin 'easymotion/vim-easymotion'
+	Plugin 'ervandew/supertab'
+	Plugin 'garbas/vim-snipmate'
+	" Plugin 'kien/ctrlp.vim'
+	Plugin 'ctrlpvim/ctrlp.vim'
+	Plugin 'leafgarland/typescript-vim'
 	Plugin 'scrooloose/nerdtree'
 	Plugin 'scrooloose/syntastic'
+	Plugin 'terryma/vim-multiple-cursors'
+	Plugin 'tomtom/tlib_vim'
 	Plugin 'tpope/vim-dispatch'
 	Plugin 'tpope/vim-fugitive'
+	Plugin 'tpope/vim-repeat'
 	Plugin 'tpope/vim-surround'
 	Plugin 'tpope/vim-vividchalk'
+	Plugin 'valloric/matchtagalways'
 	Plugin 'vim-airline/vim-airline'
 	Plugin 'vim-airline/vim-airline-themes'
-	Plugin 'MarcWeber/vim-addon-mw-utils'
-	Plugin 'tomtom/tlib_vim'
-	Plugin 'garbas/vim-snipmate'
-	Plugin 'valloric/matchtagalways'
-	Plugin 'altercation/vim-colors-solarized'
-	Plugin 'tpope/vim-repeat'
 	" Optional:
-	"   Plugin 'honza/vim-snippets'
 
 	call vundle#end()            " required
 	filetype plugin indent on    " required
@@ -288,6 +289,29 @@ syntax sync minlines=1000
 		let @@ = savedReg
 	endfunction
 
+	function! DragVertical(type, dir)
+		" move a selection around
+		if a:type ==# 'V'
+			let [tline, col1] = getpos("'<")[1:2]
+			let [bline, col2] = getpos("'>")[1:2]
+			let linecount = bline-tline
+
+			let fdir = bline+1
+			if(a:dir ==# -1)
+				let fdir = tline - 2
+			endif
+			
+			let tline = tline + a:dir
+			execute "'<,'>m" fdir
+			execute "normal! ".tline."G"
+			execute "normal! V".linecount."j"
+		else
+			return
+		endif
+	endfunction
+	vnoremap <up> :<C-U>call DragVertical(visualmode(), -1)<cr>
+	vnoremap <down> :<C-U>call DragVertical(visualmode(), 1)<cr>
+
 	function! DropCurrentBuffer()
 		" drops the current buffer without closing window"
 		let cbuf=bufnr('%')
@@ -298,8 +322,6 @@ syntax sync minlines=1000
 
 	command! Nom execute "%s///g"
 	command! BM execute "bufdo | bd!"
-	command! BD execute "bp | sp | bn | bd"
-	command! SA execute "bufdo w"
 	command! SAC execute 'normal! ggVG"+y'
 
 	function! MoveLine(lnum)
