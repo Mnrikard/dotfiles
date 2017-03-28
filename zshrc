@@ -12,7 +12,7 @@ function gpush {
 
 function gpull {
 	branch=`git rev-parse --abbrev-ref HEAD`
-	git pull origin $branch
+	git pull origin $branch --rebase
 }
 
 function browse {

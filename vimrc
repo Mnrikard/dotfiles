@@ -15,9 +15,7 @@ set encoding=utf-8
 	Plugin 'VundleVim/Vundle.vim'
 
 	"plugin on GitHub repo
-	if (v:servername ==? "VIMSTUDIO")
-		Plugin 'OmniSharp/Omnisharp-vim'
-	endif
+	Plugin 'OmniSharp/Omnisharp-vim'
 	Plugin 'MarcWeber/vim-addon-mw-utils'
 	Plugin 'OrangeT/vim-csharp'
 	Plugin 'PProvost/vim-ps1'
@@ -40,6 +38,7 @@ set encoding=utf-8
 	Plugin 'valloric/matchtagalways'
 	Plugin 'vim-airline/vim-airline'
 	Plugin 'vim-airline/vim-airline-themes'
+	Plugin 'vim-scripts/dbext.vim'
 	" Optional:
 
 	call vundle#end()            " required
@@ -48,13 +47,13 @@ set encoding=utf-8
 
 "PluginSettings{{{
 	"OmniSharp {{{
-	if(v:servername ==? "VIMSTUDIO" && (has("python") || has("python3")))
+	if(has("python") || has("python3"))
 		let g:OmniSharp_server_type = 'roslyn'
 		let g:OmniSharp_host = "http://localhost:2000"
 		"Set the type lookup function to use the preview window instead of the status line
 		let g:OmniSharp_typeLookupInPreview = 0
 		"Timeout in seconds to wait for a response from the server
-		let g:OmniSharp_timeout = 1
+		let g:OmniSharp_timeout = 5
 		set noshowmatch
 
 		let g:SuperTabDefaultCompletionType = 'context'
@@ -144,18 +143,21 @@ set encoding=utf-8
 "Sets{{{
 
 	if has("win32")
-		"set shell=cmd.exe
-		"set shellcmdflag=/c\ powershell.exe\ -NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned
+		"set shell=shl.exe
+		"set shellcmdflag=/c\ ps
 		"set shellpipe=|
-		"set shellredir=>
-
-		"set shell=powershell
-		"set shellcmdflag=\ -NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned\ -c
-		"set shellpipe=>%s\ 2>&1
-		"set shellredir=>%s\ 2>&1
+		"set shellredir=\|Out-File\ %s\ -Encoding\ ASCII\ -Width\ 1000
+		""set shellredir=>
 		"set shellquote=\ 
 		"set shellxquote=(
 
+		"set shell=PowerShell.exe
+		"set shellcmdflag=\ -NoLogo\ -NoProfile\ -NonInteractive\ -ExecutionPolicy\ RemoteSigned\ -c\ &
+		"set shellpipe=|
+		"set shellredir=\|Out-File\ %s\ -Encoding\ ASCII\ -Width\ 1000
+		"set shellquote=\ 
+		"set shellxquote=
+		"set noshelltemp
 	else
 		set shell=/bin/zsh
 	endif
@@ -234,13 +236,14 @@ set encoding=utf-8
 	nnoremap L L10j10k
 	nnoremap H H10k10j
 	nnoremap <leader>nt :NERDTreeToggle<cr>
-	nnoremap <leader>cdh :cd %:p:h<cr>
-	inoremap [] []<Esc>i
+	"inoremap [] []<Esc>i
 
-	inoremap <Left> <Esc>h
-	inoremap <Right> <Esc>l
-	inoremap <Up> <Esc>k
-	inoremap <Down> <Esc>j
+	nnoremap <f6> :wincmd W<cr>
+
+	"inoremap <Left> <Esc>h
+	"inoremap <Right> <Esc>l
+	"inoremap <Up> <Esc>k
+	"inoremap <Down> <Esc>j
 "}}}
 
 "AutoCmd{{{
@@ -254,16 +257,21 @@ augroup myAutoCmds
 
 	autocmd FileType markdown setlocal nonumber
 	autocmd FileType markdown setlocal wrap
-	autocmd FileType markdown setlocal colorcolumn=80
+	autocmd FileType markdown setlocal colorcolumn=120,121,122,123,124,125,126,127,128,129,130
 	autocmd FileType markdown setlocal spell
-	autocmd FileType markdown setlocal foldcolumn=12
 	autocmd FileType markdown setlocal expandtab
 
 	autocmd FileType cs,javascript inoremap <buffer> { {<cr>}<Esc>kA
 
 	autocmd FileType cs setlocal errorformat=%f(%l\\\,%c):\ %m\[
-	autocmd FileType cs setlocal makeprg=msbuild.bat\ /nologo\ /v:q\ /property:GenerateFullPaths=true
+	"
+	"autocmd FileType cs setlocal makeprg=msbuild.bat\ /nologo\ /v:q\ /property:GenerateFullPaths=true
 
+augroup end
+augroup FileTypeCmds
+	autocmd!
+	autocmd FileType sql nnoremap <f5> :DBExecSQLUnderCursor<cr>
+	autocmd FileType sql vnoremap <f5> :DBExecVisualSQL<cr>
 augroup end
 "}}}
 
@@ -304,7 +312,11 @@ syntax sync minlines=1000
 			let tline = tline + a:dir
 			execute "'<,'>m" fdir
 			execute "normal! ".tline."G"
-			execute "normal! V".linecount."j"
+			if linecount ==# 0
+				execute "normal! V"
+			else
+				execute "normal! V".linecount."j"
+			endif
 		else
 			return
 		endif
