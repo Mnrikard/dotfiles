@@ -20,7 +20,7 @@ set encoding=utf-8
 	Plugin 'OrangeT/vim-csharp'
 	Plugin 'PProvost/vim-ps1'
 	Plugin 'altercation/vim-colors-solarized'
-	" Plugin 'easymotion/vim-easymotion'
+	"Plugin 'easymotion/vim-easymotion'
 	Plugin 'ervandew/supertab'
 	Plugin 'garbas/vim-snipmate'
 	" Plugin 'kien/ctrlp.vim'
@@ -198,6 +198,8 @@ set encoding=utf-8
 	set splitright
 	set splitbelow
 	set visualbell
+	set noexpandtab
+	set background=dark
 
 	if has('gui_running')
 		set guioptions-=T  " no toolbar
@@ -224,6 +226,7 @@ set encoding=utf-8
 	nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 	nnoremap <leader>sv :source $MYVIMRC<cr>
 	inoremap jjk <Esc>
+	inoremap jjj <Esc>jo
 	nnoremap <leader>kd :execute "normal! mhgg=G<C-v><cr>`h"<cr>
 	nnoremap <leader>wh :wincmd W<cr>
 	nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
