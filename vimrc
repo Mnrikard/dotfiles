@@ -138,6 +138,11 @@ set encoding=utf-8
 	let g:dbext_default_profile_Model2EquestPlus = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3:dbname=EquestPlus'
 	"let g:dbext_default_profile_Dev2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3Sup:dbname=ClientInterfaces'
 	"}}}
+	
+	"solarized{{{
+	let g:solarized_italic=0
+	"}}}
+	
 "}}}
 
 "Sets{{{
@@ -219,7 +224,6 @@ set encoding=utf-8
 	nnoremap <C-tab> :bn<cr>
 	nnoremap <C-S-tab> :bprev<cr>
 	nnoremap <C-s> :w<cr>
-	inoremap <C-s> <Esc>:w<cr>a
 	nnoremap <Leader>o i<cr><Esc>
 	nnoremap <C-s> :w<cr>
 	nnoremap <Leader>p "0p
@@ -234,11 +238,15 @@ set encoding=utf-8
 	nnoremap <leader>ll viwgu
 	nnoremap <leader>uu viwgU
 	nnoremap <leader>rt :OmniSharpRunTests<cr>
-	inoremap :www <Esc>:w<cr>
 	nnoremap Q <nop>
 	nnoremap L L10j10k
 	nnoremap H H10k10j
 	nnoremap <leader>nt :NERDTreeToggle<cr>
+
+	inoremap <C-s> <Esc>:w<cr>a
+	inoremap jjk <Esc>
+	inoremap :www <Esc>:w<cr>
+	inoremap <C-v> <C-r>+
 	"inoremap [] []<Esc>i
 
 	nnoremap <f6> :wincmd W<cr>
