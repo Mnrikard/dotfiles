@@ -242,6 +242,7 @@ set encoding=utf-8
 	nnoremap L L10j10k
 	nnoremap H H10k10j
 	nnoremap <leader>nt :NERDTreeToggle<cr>
+	nnoremap <C-z> u
 
 	inoremap <C-s> <Esc>:w<cr>a
 	inoremap jjk <Esc>
