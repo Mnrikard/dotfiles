@@ -121,8 +121,8 @@ function gfetch {
 	git fetch -p
 }
 
-function mklink ($target, $link){
-	New-Item -Path $link -ItemType SymbolicLink -Value $target
+function mklink ($link, $target){
+	cmd /c mklink $link $target
 }
 
 $env:home = "c:\Users\mrikard\"
