@@ -1,65 +1,72 @@
 {
 	"tabString":"\t",
+	"pluginsDirectory":"c:\\users\\mrikard\\pastyPlugins",
 	"savedCommands":[
-		{"name":"letterb","commands":[
+		{"name":"hamburger","description":"hungry?","commands":[
+			{"name":"settext","args":["🍔"]}
+		]}
+		,{"name":"letterb","commands":[
 			{"name":"rep","args":["{{replaceWhat}}","b"]}
 			],"parameters":[
 			{"name":"replaceWhat","defaultValue":null}
 				]
-		},
-		{"name":"hamburger","description":"hungry?","commands":[
-			{"name":"settext","args":["🍔"]}
-		]},
-		{"name":"numlist","description":"List of numbers with parenthesis around it","commands":[
+		}
+		,{"name":":)","description":"smiles","commands":[
+			{"name":"settext","args":["☻"]}
+		]}
+		,{"name":"numlist","description":"List of numbers with parenthesis around it","commands":[
 			{"name":"rep","args":["[^\\d\\.\\-]+", ","],"description":"replace all non-digits with commas"},
 			{"name":"rep","args":["[,]+", ","],"description":"replace multiple commas with single ones"},
 			{"name":"rep","args":["^,", ""],"description":"remove leading commas"},
 			{"name":"rep","args":[",$", ""],"description":"remove trailing commas"},
 			{"name":"rep","args":["(.|\n)+", "($&)"],"description":"put parenthesis around everything"},
 			{"name":"rep","args":["(.{80,90},)", "$1\n"],"description":"keep the line length sensible"}
-		]},
-		{"name":"smash","description":"smashes empty lines","commands":[
+		]}
+		,{"name":"smash","description":"smashes empty lines","commands":[
 			{"name":"rep","args":["\n\\s*", "\n"]}
-		]},
-		{"name":"hulksmash","description":"smash it down to one line","commands":[
+		]}
+		,{"name":"hulksmash","description":"smash it down to one line","commands":[
 			{"name":"smash","args":[]},
 			{"name":"rep","args":["\\s*\n\\s*", ""]}
-		]},
-		{"name":"entab","description":"converts spaces to tabs","commands":[
+		]}
+		,{"name":"entab","description":"converts spaces to tabs","commands":[
 			{"name":"rep","args":["    ", "\t"]}
-		]},
-		{"name":"detab","description":"converts tabs to spaces","commands":[
+		]}
+		,{"name":"detab","description":"converts tabs to spaces","commands":[
 			{"name":"rep","args":["\t", "    "]}
-		]},
-		{"name":"sqlsafe","description":"replaces apostrophes with two apostrophes","commands":[
+		]}
+		,{"name":"sqlsafe","description":"replaces apostrophes with two apostrophes","commands":[
 			{"name":"rep","args":["'","''"]}
-		]},
-		{"name":"sqlunsafe","description":"replaces two apostrophes with one apostrophe","commands":[
+		]}
+		,{"name":"sqlunsafe","description":"replaces two apostrophes with one apostrophe","commands":[
 			{"name":"rep","args":["''","'"]}
-		]},
-		{"name":"list","description":"replaces new lines with commas","commands":[
+		]}
+		,{"name":"list","description":"replaces new lines with commas","commands":[
 			{"name":"rep","args":["\n+", ","]}
-		]},
-		{"name":"strlist","description":"Same as \"list\" but adds apostrophes around the list items","commands":[
+		]}
+		,{"name":"strlist","description":"Same as \"list\" but adds apostrophes around the list items","commands":[
 			{"name":"smash","args":[]},
 			{"name":"rep","args":[ "'","''"],"description":"convert singe apos to escaped"},
 			{"name":"rep","args":["\n","','"],"description":"each line is a string"},
 			{"name":"rep","args":["[\\d\\D]+","('$&')"],"description":"put parens around everything"},
 			{"name":"rep","args":[".{80,140},","$&\n"],"description":"keep the line length sensible"}
-		]},
-		{"name":"trimlines","description":"Removes whitespace at the end of the line","commands":[
+		]}
+		,{"name":"trimends","description":"Removes whitespace at the end of the line","commands":[
 			{"name":"rep","args":["[ \t]+$","","-mig"]}
-		]},
-		{"name":"doublequote","description":"quotation mark to double quotation mark","commands":[
+		]}
+		,{"name":"trimlines","description":"Removes whitespace at both ends of the line","commands":[
+			{"name":"rep","args":["^[ \t]*(.+?)[ \t]*$","$1","-mig"]}
+		]}
+		,{"name":"doublequote","description":"quotation mark to double quotation mark","commands":[
 			{"name":"rep","args":["\"","\"\""]}
-		]},
-		{"name":"GuidList","description":"Gets a list of Guid's separated by commas, enclosed in apostrophes","commands":[
+		]}
+		,{"name":"GuidList","description":"Gets a list of Guid's separated by commas, enclosed in apostrophes","commands":[
 			{"name":"grep","args":["[\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}","','"]},
 			{"name":"dedup","args":["','"]},
 			{"name":"rep","args":["^((.|\n)+)$","('$1')"]},
 			{"name":"rep","args":["[\\da-f\\-',]{194},","$&\n"]}
-		]},
-		{"name":"mdtable","description":"tables into markdown tables","commands":[
+		]}
+		,{"name":"mdtable","description":"tables into markdown tables","commands":[
 			{"name":"rep","args":["([ ]{2,}|\t+)","\t|\t"]},
 			{"name":"rep","args":["^.+$","| $&\t|","-m"]},
 			{"name":"rep","args":["^.+","$&\n|------|"]},
@@ -116,6 +123,39 @@
 		],"parameters":[
 			{"name":"link text", "defaultValue":null},
 			{"name":"alt text", "defaultValue":""}
+		]}
+		,{"name":"sqlcase","description":"Upper case key-words in SQL","commands":[
+			{"name":"entab", "args":[]},
+			{"name":"rep","args":[
+				"\\b(abs|after|all|alter|and|as|avg|begin|between|by|nonclustered|clustered|cascade|case|cast|catch|ceiling|charindex|close|coalesce|column|commit|constraint|contains|continue|convert|count|create|cube|cursor|dateadd|datediff|datename|datepart|day|deallocate|declare|default|delete|desc|distinct|drop|else|end|escape|except|exec|execute|exists|exit|fetch|first|floor|for|from|function|get|getdate|go|goto|grant|group|grouping|having|host_id|host_name|hour|identity|if|in|index|inner|insert|into|is|isdate|isnull|join|key|left|len|length|like|lower|ltrim|max|min|minute|mod|modify|month|newid|next|nolock|not|null|off|on|or|order|out|outer|output|partition|power|raw|references|replace|return|returns|right|rollback|rollup|round|row|row_number|rows|rtrim|second|select|set|soundex|sqrt|substring|sum|sysdatetime|table|then|to|transaction|trigger|truncate|try|union|update|upper|use|values|view|when|where|with|while|year)\\b",
+				"\\u$1"
+			]}
+		]}
+		,{"name":"insertWithXml","description":"Insert with XML columns (which are multiline)","commands":[
+			{"name":"rep","args":[">\\s+<", "><"]},
+			{"name":"insert","args":["{{table name}}"]},
+			{"name":"xml","args":[]}
+		],"parameters":[
+			{"name":"table name", "defaultValue":null}
+		]}
+		,{"name":"tablevar","description":"creates a table variable from Alt+F1 data","commands":[
+			{"name":"rep","args":["(.+?)\t(.+?)\t(.+?)\t(.+?).+","$1 $2($4)"]}
+			,{"name":"rep","args":["\n",","]}
+			,{"name":"rep","args":["(?!=(varchar|decimal))\\(\\d+\\)",""]}
+			,{"name":"rep","args":[".+","declare @{{variable name}} table ($&)"]}
+		],"parameters":[
+			{"name":"variable name","defaultValue":null}
+		]}
+		,{"name":"emoji","description":"converts common representations to emoji","commands":[
+			{"name":"rep","args":[":\\)","☺️"],"description":":)"},
+			{"name":"rep","args":[":'\\)","😂"],"description":":')"},
+			{"name":"rep","args":["':\\)","😅"],"description":"':)"}
+			,{"name":"rep","args":[";\\)","😉"],"description":";)"}
+			,{"name":"rep","args":[":\\(","☹"],"description":":("}
+			,{"name":"rep","args":["X\\|","😣"],"description":"X|"}
+		]}
+		,{"name":"sqlcs","commands":[
+			{"name":"settext","args":["using (SqlConnection conn = new SqlConnection(ConnectionString))\n{\n\tconn.Open();\n\tusing (SqlCommand cmd = conn.CreateCommand())\n\t{\n\t\tcmd.CommandText = \"\";\n\t\tcmd.CommandType = CommandType.StoredProcedure;\n\t\tcmd.Parameters.AddWithValue(\"@parm\", parmValue);\n\t\tusing (SqlDataReader dr = cmd.ExecuteReader())\n\t\t{\n\t\t\twhile (dr.Read())\n\t\t\t{\n\t\t\t\t//do something\n\t\t\t}\n\t\t}\n\t}\n}"]}
 		]}
 	]
 }

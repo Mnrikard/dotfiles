@@ -1,8 +1,15 @@
-Import-Module PsGet
+﻿Import-Module PsGet
 Import-Module pscx
 Import-Module posh-git
+Import-Module PSReadline
+
+PSReadLine\Set-PSReadlineOption -EditMode Vi
+
 
 $env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\bin"
+
+$global:GitPromptSettings.EnableWindowTitle = $null
+$Host.UI.RawUI.WindowTitle = "Powershell"
 
 # load scripts from directory in profile
 Get-ChildItem ('c:\cs\Tools\PoshScripts') | Where `
@@ -15,6 +22,13 @@ function lst()
 	$tmpListDir = Get-ItemProperty hkcu:\Environment | ForEach-Object {Get-ItemProperty $_.pspath} | where-object {$_.tempListDir} | Foreach-Object {$_.tempListDir}
 	cd $tmpListDir
 	cls
+}
+
+function SSL-Verify
+{
+	param([string] $off = (Read-Host "Turn off? [true|false]"))
+	& npm config -g set strict-ssl $off
+	& git config --global http.sslVerify $off
 }
 
 function toWord
