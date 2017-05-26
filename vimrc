@@ -22,7 +22,9 @@ set encoding=utf-8
 	Plugin 'altercation/vim-colors-solarized'
 	"Plugin 'easymotion/vim-easymotion'
 	Plugin 'ervandew/supertab'
+	Plugin 'gabrielelana/vim-markdown'
 	Plugin 'garbas/vim-snipmate'
+	Plugin 'godlygeek/tabular'
 	" Plugin 'kien/ctrlp.vim'
 	Plugin 'ctrlpvim/ctrlp.vim'
 	Plugin 'leafgarland/typescript-vim'
@@ -49,6 +51,8 @@ set encoding=utf-8
 	"OmniSharp {{{
 	if(has("python") || has("python3"))
 		let g:OmniSharp_server_type = 'roslyn'
+		let g:OmniSharp_prefer_global_sln = 1
+		let g:OmniSharp_server_path = 'C:\GitRepos\outside\omnisharp-roslyn\artifacts\publish\OmniSharp\default\net46\OmniSharp.exe'
 		let g:OmniSharp_host = "http://localhost:2000"
 		"Set the type lookup function to use the preview window instead of the status line
 		let g:OmniSharp_typeLookupInPreview = 0
@@ -105,7 +109,7 @@ set encoding=utf-8
 
 		" Add syntax highlighting for types and interfaces
 		nnoremap <leader>th :OmniSharpHighlightTypes<cr>
-	endif
+	endif 
 	"}}}
 	"Airline {{{
 	"let g:airline#extensions#tabline#enabled = 1
@@ -113,13 +117,16 @@ set encoding=utf-8
 	let g:airline_right_sep=nr2char(0xe0b2)
 	let g:airline_theme='hybrid'
 	"}}}
+	"MatchTagAlways{{{
+	let g:mta_filetypes = { 'html' : 1, 'xhtml' : 1, 'xml' : 1, 'jinja' : 1, 'xslt':1,'cshtml':1 }
+	"}}}
 	let g:xml_syntax_folding=1
 	au FileType xml,xsl,xslt,html,razor setlocal foldmethod=syntax
-	set statusline+=%{fugitive#statusline()}
+	"set statusline+=%{fugitive#statusline()}
 	"syntastic {{{
-		set statusline+=%#warningmsg#
-		set statusline+=%{SyntasticStatuslineFlag()}
-		set statusline+=%*
+	"	set statusline+=%#warningmsg#
+	"	set statusline+=%{SyntasticStatuslineFlag()}
+	"	set statusline+=%*
 
 		let g:syntastic_always_populate_loc_list = 1
 		let g:syntastic_auto_loc_list = 2
@@ -130,13 +137,16 @@ set encoding=utf-8
 		let g:syntastic_js_checkers = ['code_checker']
 	"}}}
 	"dbext{{{
-	let g:dbext_default_profile_ProdClientInt = 'type=SQLSRV:integratedlogin=1:srvname=ProdDb3Sup\ProdDb3Sup:dbname=ClientInterfaces:port=1757'
-	let g:dbext_default_profile_ProdEquestPlus = 'type=SQLSRV:integratedlogin=1:srvname=DBCluster2:dbname=EquestPlus'
-	let g:dbext_default_profile_Dev2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3Sup:dbname=ClientInterfaces'
-	let g:dbext_default_profile_Dev2EquestPlus = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3:dbname=EquestPlus'
-	let g:dbext_default_profile_Model2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3Sup:dbname=ClientInterfaces'
-	let g:dbext_default_profile_Model2EquestPlus = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3:dbname=EquestPlus'
+	let g:dbext_default_profile_ProdDb3Sup = 'type=SQLSRV:integratedlogin=1:srvname=ProdDb3Sup\ProdDb3Sup:dbname=ClientInterfaces:port=1757'
+	let g:dbext_default_profile_DBCluster2 = 'type=SQLSRV:integratedlogin=1:srvname=DBCluster2:dbname=EquestPlus'
+	let g:dbext_default_profile_Dev2Db3Sup = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3Sup:dbname=ClientInterfaces'
+	let g:dbext_default_profile_Dev2Db3 = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3:dbname=EquestPlus'
+	let g:dbext_default_profile_Model2Db3Sup = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3Sup:dbname=ClientInterfaces'
+	let g:dbext_default_profile_Model2Db3 = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3:dbname=EquestPlus'
 	"let g:dbext_default_profile_Dev2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3Sup:dbname=ClientInterfaces'
+	
+	vnoremap <f5> :DBExecVisualSQL<cr>
+	nnoremap <f5> :DBExecSQLUnderCursor<cr>
 	"}}}
 	
 	"solarized{{{
@@ -194,7 +204,7 @@ set encoding=utf-8
 	set foldlevelstart=99
 	set foldmethod=indent
 	set nowrap
-	set list
+	set nolist
 	set listchars=tab:»\ ,trail:·
 	let mapleader=" "
 	set encoding=utf8
@@ -212,6 +222,12 @@ set encoding=utf-8
 	else
 		colorscheme vividchalk
 	endif
+
+	highlight default spacesbad term=undercurl ctermbg=13 gui=undercurl guisp=#2aa198
+	highlight default CodeSmells ctermbg=red guibg=red
+	match CodeSmells /\v\s$/
+	2match spacesbad /  /
+	
 "}}}
 
 "Maps{{{
@@ -229,8 +245,6 @@ set encoding=utf-8
 	nnoremap <Leader>p "0p
 	nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 	nnoremap <leader>sv :source $MYVIMRC<cr>
-	inoremap jjk <Esc>
-	inoremap jjj <Esc>jo
 	nnoremap <leader>kd :execute "normal! mhgg=G<C-v><cr>`h"<cr>
 	nnoremap <leader>wh :wincmd W<cr>
 	nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
@@ -238,12 +252,13 @@ set encoding=utf-8
 	nnoremap <leader>ll viwgu
 	nnoremap <leader>uu viwgU
 	nnoremap <leader>rt :OmniSharpRunTests<cr>
-	nnoremap Q <nop>
 	nnoremap L L10j10k
 	nnoremap H H10k10j
 	nnoremap <leader>nt :NERDTreeToggle<cr>
 	nnoremap <C-z> u
 
+	inoremap jjk <Esc>
+	inoremap jjj <Esc>jo
 	inoremap <C-s> <Esc>:w<cr>a
 	inoremap jjk <Esc>
 	inoremap :www <Esc>:w<cr>
@@ -252,39 +267,38 @@ set encoding=utf-8
 
 	nnoremap <f6> :wincmd W<cr>
 
-	"inoremap <Left> <Esc>h
-	"inoremap <Right> <Esc>l
-	"inoremap <Up> <Esc>k
-	"inoremap <Down> <Esc>j
+	iabbrev {{ {<cr>}<Esc>kA
 "}}}
 
 "AutoCmd{{{
-augroup myAutoCmds
-	autocmd!
-	autocmd FileType xml,xsl,xslt setlocal foldmethod=syntax
-	autocmd BufEnter * syntax sync minlines=1000
+	augroup myAutoCmds
+		autocmd!
+		autocmd FileType xml,xsl,xslt setlocal foldmethod=syntax
+		autocmd BufEnter * syntax sync minlines=1000
 
-	autocmd FileType vim setlocal foldmethod=marker
-	autocmd FileType vim setlocal foldlevel=0
+		autocmd ColorScheme * highlight default spacesbad term=undercurl ctermbg=13 gui=undercurl guisp=#2aa198
+		autocmd ColorScheme * highlight default CodeSmells ctermbg=red guibg=red
 
-	autocmd FileType markdown setlocal nonumber
-	autocmd FileType markdown setlocal wrap
-	autocmd FileType markdown setlocal colorcolumn=120,121,122,123,124,125,126,127,128,129,130
-	autocmd FileType markdown setlocal spell
-	autocmd FileType markdown setlocal expandtab
+		autocmd FileType vim setlocal  foldmethod=marker
+		autocmd FileType vim setlocal foldlevel=0
 
-	autocmd FileType cs,javascript inoremap <buffer> { {<cr>}<Esc>kA
+		autocmd FileType markdown setlocal nonumber
+		autocmd FileType markdown setlocal wrap
+		autocmd FileType markdown setlocal colorcolumn=120,121,122,123,124,125,126,127,128,129,130
+		autocmd FileType markdown setlocal spell
+		autocmd FileType markdown setlocal expandtab
+		autocmd FileType markdown setlocal foldcolumn=5
 
-	autocmd FileType cs setlocal errorformat=%f(%l\\\,%c):\ %m\[
-	"
-	"autocmd FileType cs setlocal makeprg=msbuild.bat\ /nologo\ /v:q\ /property:GenerateFullPaths=true
+		autocmd FileType cs inoremap <buffer> ){ )<cr>{<cr>}<Esc>kA
 
-augroup end
-augroup FileTypeCmds
-	autocmd!
-	autocmd FileType sql nnoremap <f5> :DBExecSQLUnderCursor<cr>
-	autocmd FileType sql vnoremap <f5> :DBExecVisualSQL<cr>
-augroup end
+		autocmd FileType cs setlocal errorformat=%f(%l\\\,%c):\ %m\[
+
+	augroup end
+	augroup FileTypeCmds
+		autocmd!
+		autocmd FileType sql nnoremap <f5> :DBExecSQLUnderCursor<cr>
+		autocmd FileType sql vnoremap <f5> :DBExecVisualSQL<cr>
+	augroup end
 "}}}
 
 syntax on
@@ -365,9 +379,17 @@ syntax sync minlines=1000
 		execute "m" currline+1
 	endfunction
 
+	function! ShowChars()
+		normal! :setlocal list
+		normal! :5sleep
+		normal! :setlocal nolist
+	endfunction
+
 	command! Pst execute 'normal! "+p'
 
 	command! -nargs=1 M execute "call MoveLine(<args>)"
 	command! -nargs=0 Md execute "call MoveLineDown()"
 	command! -nargs=0 Mu execute "call MoveLineUp()"
+	command! -nargs=0 ShowChars execute "call ShowChars()"
 "}}}
+
