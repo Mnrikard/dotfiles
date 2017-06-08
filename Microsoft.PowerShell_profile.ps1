@@ -24,11 +24,13 @@ function lst()
 	cls
 }
 
-function SSL-Verify
+function SSL-Toggle
 {
-	param([string] $off = (Read-Host "Turn off? [true|false]"))
-	& npm config -g set strict-ssl $off
-	& git config --global http.sslVerify $off
+	$onoff = if((git config --global http.sslVerify) -eq "true") {"false"} else {"true"};
+	& npm config -g set strict-ssl $onoff
+	& git config --global http.sslVerify $onoff
+	$security = if($onoff -eq "true"){"secure"}else{"INSECURE"};
+	Write-Host "Setting SSL to $security"
 }
 
 function toWord

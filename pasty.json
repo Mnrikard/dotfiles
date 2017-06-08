@@ -111,10 +111,11 @@
 			{"name":"settext", "args":["00000000-DEAD-C0DE-0000-000000000000"]}
 		]}
 		,{"name":"cursor", "description":"tsql cursor", "commands":[
-			{"name":"rep", "args":["(.|\n)+", "Declare {{Cursor Name}} CURSOR FAST_FORWARD FOR \n\t$&\n\nOPEN {{Cursor Name}}\nFETCH NEXT FROM {{Cursor Name}} \nINTO {{Variable List}} \n\nWHILE @@FETCH_STATUS = 0 \nBEGIN \n\t--row specific functions\n\tFETCH NEXT FROM {{Cursor Name}} \n\tINTO {{Variable List}} \nEND \nCLOSE {{Cursor Name}} \nDEALLOCATE {{Cursor Name}}"]}
+			{"name":"rep", "args":["(.|\n)*select ((.|\n)+)\\sfrom(.|\n)+", "/*vars*/Declare $2;\n\nDeclare {{Cursor Name}} CURSOR FAST_FORWARD FOR \n\t$&\n\nOPEN {{Cursor Name}}\nFETCH NEXT FROM {{Cursor Name}} \nINTO $2 \n\nWHILE @@FETCH_STATUS = 0 \nBEGIN \n\t--row specific functions\n\tFETCH NEXT FROM {{Cursor Name}} \n\tINTO $2 \nEND \nCLOSE {{Cursor Name}} \nDEALLOCATE {{Cursor Name}}"]}
+			,{"name":"rep", "args":["(\\/\\*vars\\*\\/Declare.+)(\\b\\w+\\b)", "$1@$2"]}
+			,{"name":"rep", "args":["(INTO.+)(\\b\\w+\\b)", "$1@$2"]}
 		],"parameters":[
-			{"name":"Cursor Name","defaultValue":null},
-			{"name":"Variable List","defaultValue":"@vars"}
+			{"name":"Cursor Name","defaultValue":null}
 		]}
 		,{"name":"mdlink", "description":"Markdown links","commands":[
 			{"name":"rep", "args":[".+", "[{{link text}}]($& \"{{alt text}}\")"]},
@@ -156,6 +157,41 @@
 		]}
 		,{"name":"sqlcs","commands":[
 			{"name":"settext","args":["using (SqlConnection conn = new SqlConnection(ConnectionString))\n{\n\tconn.Open();\n\tusing (SqlCommand cmd = conn.CreateCommand())\n\t{\n\t\tcmd.CommandText = \"\";\n\t\tcmd.CommandType = CommandType.StoredProcedure;\n\t\tcmd.Parameters.AddWithValue(\"@parm\", parmValue);\n\t\tusing (SqlDataReader dr = cmd.ExecuteReader())\n\t\t{\n\t\t\twhile (dr.Read())\n\t\t\t{\n\t\t\t\t//do something\n\t\t\t}\n\t\t}\n\t}\n}"]}
+		]}
+		,{"name":"ago","commands":[
+			{"name":"settext","args":["dateadd(n,-{{number of minutes}},getdate())"]}
+		],"parameters":[
+			{"name":"number of minutes","defaultValue":"5"}
+		]}
+		,{"name":"sqlcsprops","description":"Copy Alt+F1 of table (or sys.columns) and get cs properties","commands":[
+			{"name":"rep", "args":["^(\\w+)\\t(\\w+)\\t.*","public $2 $1 { get; set; }","-m"]},
+			{"name":"rep", "args":["\\bdatetime\\b", "DateTime"]},
+			{"name":"rep", "args":["\\bvarchar\\b", "string"]},
+			{"name":"rep", "args":["\\bimage\\b", "byte[]"]},
+			{"name":"rep", "args":["\\btext\\b", "string"]},
+			{"name":"rep", "args":["\\buniqueidentifier\\b", "Guid"]},
+			{"name":"rep", "args":["\\bdate\\b", "DateTime"]},
+			{"name":"rep", "args":["\\btime\\b", "DateTime"]},
+			{"name":"rep", "args":["\\bdatetime2\\b", "DateTime"]},
+			{"name":"rep", "args":["\\bdatetimeoffset\\b", "TimeSpan"]},
+			{"name":"rep", "args":["\\btinyint\\b", "byte"]},
+			{"name":"rep", "args":["\\bsmallint\\b", "byte"]},
+			{"name":"rep", "args":["\\bsmalldatetime\\b", "DateTime"]},
+			{"name":"rep", "args":["\\breal\\b", "double"]},
+			{"name":"rep", "args":["\\bmoney\\b", "decimal"]},
+			{"name":"rep", "args":["\\bdatetime\\b", "DateTime"]},
+			{"name":"rep", "args":["\\bntext\\b", "string"]},
+			{"name":"rep", "args":["\\bbit\\b", "bool"]},
+			{"name":"rep", "args":["\\bnumeric\\b", "int"]},
+			{"name":"rep", "args":["\\bsmallmoney\\b", "decimal"]},
+			{"name":"rep", "args":["\\bbigint\\b", "long"]},
+			{"name":"rep", "args":["\\bvarbinary\\b", "byte[]"]},
+			{"name":"rep", "args":["\\bbinary\\b", "byte[]"]},
+			{"name":"rep", "args":["\\bchar\\b", "string"]},
+			{"name":"rep", "args":["\\btimestamp\\b", "TimeStamp"]},
+			{"name":"rep", "args":["\\bnvarchar\\b", "string"]},
+			{"name":"rep", "args":["\\bnchar\\b", "string"]},
+			{"name":"rep", "args":["\\bxml\\b", "XDocument"]}
 		]}
 	]
 }

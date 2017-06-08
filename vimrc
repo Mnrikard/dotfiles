@@ -115,7 +115,7 @@ set encoding=utf-8
 	"let g:airline#extensions#tabline#enabled = 1
 	let g:airline_left_sep=nr2char(0xe0b0)
 	let g:airline_right_sep=nr2char(0xe0b2)
-	let g:airline_theme='hybrid'
+	let g:airline_theme='vice'
 	"}}}
 	"MatchTagAlways{{{
 	let g:mta_filetypes = { 'html' : 1, 'xhtml' : 1, 'xml' : 1, 'jinja' : 1, 'xslt':1,'cshtml':1 }
@@ -145,8 +145,8 @@ set encoding=utf-8
 	let g:dbext_default_profile_Model2Db3 = 'type=SQLSRV:integratedlogin=1:srvname=model2Db3:dbname=EquestPlus'
 	"let g:dbext_default_profile_Dev2ClientInt = 'type=SQLSRV:integratedlogin=1:srvname=Dev2Db3Sup:dbname=ClientInterfaces'
 	
-	vnoremap <f5> :DBExecVisualSQL<cr>
-	nnoremap <f5> :DBExecSQLUnderCursor<cr>
+	vnoremap <f5> :call ExecuteVisualSql()<cr>
+	nnoremap <f5> :call ExecuteSql()<cr>
 	"}}}
 	
 	"solarized{{{
@@ -218,7 +218,7 @@ set encoding=utf-8
 
 	if has('gui_running')
 		set guioptions-=T  " no toolbar
-		colorscheme solarized
+		colorscheme vividchalk
 	else
 		colorscheme vividchalk
 	endif
@@ -249,8 +249,8 @@ set encoding=utf-8
 	nnoremap <leader>wh :wincmd W<cr>
 	nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 	nnoremap <leader>rr :set operatorfunc=Refactor<cr>g@
-	nnoremap <leader>ll viwgu
-	nnoremap <leader>uu viwgU
+	nnoremap <leader>ll guiw
+	nnoremap <leader>uu gUiw
 	nnoremap <leader>rt :OmniSharpRunTests<cr>
 	nnoremap L L10j10k
 	nnoremap H H10k10j
@@ -296,8 +296,8 @@ set encoding=utf-8
 	augroup end
 	augroup FileTypeCmds
 		autocmd!
-		autocmd FileType sql nnoremap <f5> :DBExecSQLUnderCursor<cr>
-		autocmd FileType sql vnoremap <f5> :DBExecVisualSQL<cr>
+		autocmd FileType sql nnoremap <f5> :call ExecuteSql()<cr>
+		autocmd FileType sql vnoremap <f5> :call ExecuteVisualSql()<cr>
 	augroup end
 "}}}
 
@@ -391,5 +391,18 @@ syntax sync minlines=1000
 	command! -nargs=0 Md execute "call MoveLineDown()"
 	command! -nargs=0 Mu execute "call MoveLineUp()"
 	command! -nargs=0 ShowChars execute "call ShowChars()"
+
+	function! ExecuteVisualSql()
+		execute ":DBExecVisualSQL"
+		execute ":wincmd W"
+		execute ":%!pasty trimosql"
+		execute ":Nom"
+	endfunction
+	function! ExecuteSql()
+		execute ":DBExecSQLUnderCursor"
+		execute ":wincmd W"
+		execute ":%!pasty trimosql"
+		execute ":Nom"
+	endfunction
 "}}}
 

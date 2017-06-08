@@ -31,17 +31,21 @@ function browse {
 	fi
 }
 
-function sslVerify {
-	onoff=$1
-	if [ "$onoff" = "" ]; then
-		echo "SSL verify? [true|false]"
-		read onoff
+function sslToggle {
+	onoff=`git config --global http.sslVerify`
+	if [ "$onoff" = "false" ]; then
+		onoff="true"
+	else
+		onoff="false"
 	fi
 
 	npm config -g set strict-ssl $onoff
 	git config --global http.sslVerify $onoff
-	echo "npm config -g set strict-ssl $onoff"
-	echo "git config --global http.sslVerify $onoff"
+	security="secure"
+	if [ "$onoff" = "false" ]; then
+		security="INSECURE"
+	fi
+	echo "SSL verification is $security"
 }
 
 # Path to your oh-my-zsh installation.
