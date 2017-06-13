@@ -334,7 +334,7 @@ syntax sync minlines=1000
 			if(a:dir ==# -1)
 				let fdir = tline - 2
 			endif
-			
+
 			let tline = tline + a:dir
 			execute "'<,'>m" fdir
 			execute "normal! ".tline."G"
@@ -349,6 +349,23 @@ syntax sync minlines=1000
 	endfunction
 	vnoremap <up> :<C-U>call DragVertical(visualmode(), -1)<cr>
 	vnoremap <down> :<C-U>call DragVertical(visualmode(), 1)<cr>
+
+	function! SmoothScroll(dir,ln)
+		let h = (winheight(0)-5)/a:ln
+		for i in range(0,h)
+			if(a:dir ==# "up")
+				execute ":normal! \<C-Y>"
+			else
+				execute ":normal! \<C-E>"
+			endif
+			redraw
+			sleep 25m
+		endfor
+	endfunction
+	nnoremap <C-u> :call SmoothScroll("up",1)<cr>
+	nnoremap <C-d> :call SmoothScroll("down",1)<cr>
+	nnoremap <C-M-u> :call SmoothScroll("up",2)<cr>
+	nnoremap <C-M-d> :call SmoothScroll("down",2)<cr>
 
 	function! DropCurrentBuffer()
 		" drops the current buffer without closing window"
@@ -380,10 +397,12 @@ syntax sync minlines=1000
 	endfunction
 
 	function! ShowChars()
-		normal! :setlocal list
-		normal! :5sleep
-		normal! :setlocal nolist
+		execute ":setlocal list"
+		execute ":redraw"
+		execute ":sleep 2000m"
+		execute ":setlocal nolist"
 	endfunction
+	nnoremap <Leader>vv :ShowChars<cr>
 
 	command! Pst execute 'normal! "+p'
 
@@ -403,6 +422,14 @@ syntax sync minlines=1000
 		execute ":wincmd W"
 		execute ":%!pasty trimosql"
 		execute ":Nom"
+	endfunction
+
+	function! OpenHere()
+		execute ":!start explorer.exe %:p"
+	endfunction
+
+	function! OpenThis()
+		execute ":!start explorer.exe %:p:h"
 	endfunction
 "}}}
 

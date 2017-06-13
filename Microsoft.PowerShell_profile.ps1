@@ -49,7 +49,9 @@ function dnbuild{
 
 	$roj = (gci *roj);
 
+	Write-Host "msbuild /t:clean $roj"
 	msbuild /t:clean $roj;
+	Write-Host "msbuild /p:Platform=$p /p:Configuration=$t /v:q $roj"
 	msbuild /p:Platform=$p /p:Configuration=$t /v:q $roj;
 }
 
@@ -156,14 +158,16 @@ function global:prompt {
 		promptWrite $time White Cyan White
 
 		$loc = Get-Location
-		promptWrite $loc Blue White Black
+		promptWrite $loc Blue White DarkYellow
+		promptWrite " P O W E R S H E L L " Black DarkYellow Black
 		$realLASTEXITCODE = $LASTEXITCODE
 # Reset color, which can be messed up by Enable-GitColors
 		$Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
 		Write-VcsStatus
 		$global:LASTEXITCODE = $realLASTEXITCODE
 		Write-Host " "
-		return "PS $ "
+		promptWrite "PS $" White Blue Black
+		return " "
 }
 
 & 'C:\GitRepos\recovery\poshSSH.ps1'

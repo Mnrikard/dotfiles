@@ -5,15 +5,6 @@
 		{"name":"hamburger","description":"hungry?","commands":[
 			{"name":"settext","args":["🍔"]}
 		]}
-		,{"name":"letterb","commands":[
-			{"name":"rep","args":["{{replaceWhat}}","b"]}
-			],"parameters":[
-			{"name":"replaceWhat","defaultValue":null}
-				]
-		}
-		,{"name":":)","description":"smiles","commands":[
-			{"name":"settext","args":["☻"]}
-		]}
 		,{"name":"numlist","description":"List of numbers with parenthesis around it","commands":[
 			{"name":"rep","args":["[^\\d\\.\\-]+", ","],"description":"replace all non-digits with commas"},
 			{"name":"rep","args":["[,]+", ","],"description":"replace multiple commas with single ones"},
@@ -61,7 +52,7 @@
 			{"name":"rep","args":["\"","\"\""]}
 		]}
 		,{"name":"GuidList","description":"Gets a list of Guid's separated by commas, enclosed in apostrophes","commands":[
-			{"name":"grep","args":["[\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}","','"]},
+			{"name":"grep","args":["[\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}","','","-L"]},
 			{"name":"dedup","args":["','"]},
 			{"name":"rep","args":["^((.|\n)+)$","('$1')"]},
 			{"name":"rep","args":["[\\da-f\\-',]{194},","$&\n"]}
@@ -73,7 +64,7 @@
 			{"name":"columnAlign","args":["1"]}
 		]}
 		,{"name":"sprocme","description":"turn query into stored procedure","commands":[
-			{"name":"rep","args":["(.|\n)+", "USE [{{Database}}]\nGO\n\nIF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{{Stored Procedure Name}}]') AND type in (N'P', N'PC'))\nDROP PROCEDURE [dbo].[{{Stored Procedure Name}}]\nGO\n\nUSE [{{Database}}]\nGO\n\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE PROCEDURE [dbo].[{{Stored Procedure Name}}]\n@VARS\nAS\nBEGIN\n\n$1\n\nEND\nGO\n\nGRANT EXECUTE ON [dbo].[{{Stored Procedure Name}}] TO [DBRole_GISWEBUsers] AS [dbo]\nGO\n"]}
+			{"name":"rep","args":["(.|\n)+", "USE [{{Database}}]\nGO\n\nIF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{{Stored Procedure Name}}]') AND type in (N'P', N'PC'))\nDROP PROCEDURE [dbo].[{{Stored Procedure Name}}]\nGO\n\nUSE [{{Database}}]\nGO\n\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE PROCEDURE [dbo].[{{Stored Procedure Name}}]\n@VARS\nAS\nBEGIN\n\n$1\n\nEND\nGO\n"]}
 		], "parameters":[
 			{"name":"Database", "defaultValue":null},
 			{"name":"Stored Procedure Name", "defaultValue":null}
