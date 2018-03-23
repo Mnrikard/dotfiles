@@ -15,18 +15,15 @@ set encoding=utf-8
 	Plugin 'VundleVim/Vundle.vim'
 
 	"plugin on GitHub repo
-	Plugin 'OmniSharp/Omnisharp-vim'
 	Plugin 'MarcWeber/vim-addon-mw-utils'
+	Plugin 'OmniSharp/Omnisharp-vim'
 	Plugin 'OrangeT/vim-csharp'
 	Plugin 'PProvost/vim-ps1'
 	Plugin 'altercation/vim-colors-solarized'
-	"Plugin 'easymotion/vim-easymotion'
+	Plugin 'ctrlpvim/ctrlp.vim'
 	Plugin 'ervandew/supertab'
 	Plugin 'gabrielelana/vim-markdown'
 	Plugin 'garbas/vim-snipmate'
-	Plugin 'godlygeek/tabular'
-	" Plugin 'kien/ctrlp.vim'
-	Plugin 'ctrlpvim/ctrlp.vim'
 	Plugin 'leafgarland/typescript-vim'
 	Plugin 'scrooloose/nerdtree'
 	Plugin 'scrooloose/syntastic'
@@ -37,10 +34,19 @@ set encoding=utf-8
 	Plugin 'tpope/vim-repeat'
 	Plugin 'tpope/vim-surround'
 	Plugin 'tpope/vim-vividchalk'
-	Plugin 'valloric/matchtagalways'
 	Plugin 'vim-airline/vim-airline'
 	Plugin 'vim-airline/vim-airline-themes'
+	Plugin 'vim-scripts/ctags.vim'
 	Plugin 'vim-scripts/dbext.vim'
+
+	"Plugin 'easymotion/vim-easymotion'
+	" tabular: used to line things up
+	"Plugin 'godlygeek/tabular'
+	" fzf: fuzzy finder
+	"Plugin 'junegunn/fzf'
+	"Plugin 'kien/ctrlp.vim'
+	" match xml tags
+	"Plugin 'valloric/matchtagalways'
 	" Optional:
 
 	call vundle#end()            " required
@@ -100,6 +106,7 @@ set encoding=utf-8
 			autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
 			autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
 			autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
+			autocmd FileType cs nnoremap <leader>rr :OmniSharpRename<cr>
 			"navigate up by method/property/field
 			autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr>
 			"navigate down by method/property/field
@@ -147,6 +154,10 @@ set encoding=utf-8
 	
 	vnoremap <f5> :call ExecuteVisualSql()<cr>
 	nnoremap <f5> :call ExecuteSql()<cr>
+	"}}}
+
+	"supertab {{{
+		let g:SuperTabNoCompleteAfter = ['\s','^',',']
 	"}}}
 	
 	"solarized{{{
@@ -231,43 +242,82 @@ set encoding=utf-8
 "}}}
 
 "Maps{{{
+	"copy to system clipboard
 	vnoremap <C-c> "+y
+	" leader+h searches for word under cursor
 	vnoremap <leader>h y:<C-U>let @/="<C-R>=@"<CR>"<CR>:set hls<CR>
-
+	"un-J this, or put a new line here
 	nnoremap <C-S-j> a<CR><Esc>kA<Esc>
+	"clear highlighting
 	nnoremap <C-L> :nohl<CR><C-L>
+	" new line
 	nnoremap <leader>nl o<Esc>
+	"Tab around buffers
 	nnoremap <C-tab> :bn<cr>
 	nnoremap <C-S-tab> :bprev<cr>
+	"Ctrl+S saves
 	nnoremap <C-s> :w<cr>
+	"new line
 	nnoremap <Leader>o i<cr><Esc>
-	nnoremap <C-s> :w<cr>
+	" paste the last line copied (not last deleted)
 	nnoremap <Leader>p "0p
+	" edit and save vimrc
 	nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 	nnoremap <leader>sv :source $MYVIMRC<cr>
-	nnoremap <leader>kd :execute "normal! mhgg=G<C-v><cr>`h"<cr>
+	" prettify
+	"nnoremap <leader>kd :execute "normal! mhgg=G<C-v><cr>`h"<cr>
+	"switch windows
 	nnoremap <leader>wh :wincmd W<cr>
+	" search for word under cursor
 	nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+	" rename
 	nnoremap <leader>rr :set operatorfunc=Refactor<cr>g@
+	" lower case this word
 	nnoremap <leader>ll guiw
+	" upper case this word
 	nnoremap <leader>uu gUiw
+	" run tests
 	nnoremap <leader>rt :OmniSharpRunTests<cr>
-	nnoremap L L10j10k
-	nnoremap H H10k10j
+	" open nerdtree
 	nnoremap <leader>nt :NERDTreeToggle<cr>
+	" undo
 	nnoremap <C-z> u
-
-	inoremap jjk <Esc>
-	inoremap jjj <Esc>jo
-	inoremap <C-s> <Esc>:w<cr>a
-	inoremap jjk <Esc>
-	inoremap :www <Esc>:w<cr>
-	inoremap <C-v> <C-r>+
-	"inoremap [] []<Esc>i
-
+	" grep for word under cursor
+	nnoremap K :vimgrep /<cword>/g **/*<cr>:copen<cr>
+	" Ctrl+v works in normal mode too
+	nnoremap <C-v> "+p
+	"f6 moves windows
 	nnoremap <f6> :wincmd W<cr>
 
-	iabbrev {{ {<cr>}<Esc>kA
+
+	"escape home rows
+	inoremap jjk <Esc>
+	" new line below
+	"inoremap <C-J> <Esc>jo
+	" new line above
+	"inoremap <C-K> <Esc>ko
+	" save in insert mode
+	inoremap <C-s> <Esc>:w<cr>a
+	" write
+	" make Ctrl+V work as expected
+	inoremap <C-v> <C-r>+<right>
+	inoremap <C-S-v> <esc>"+pa
+	"inoremap [] []<Esc>i
+	"Shift+arrows to select
+	inoremap <C-S-Left> <esc>vb
+	inoremap <C-S-Right> <esc>ve
+	inoremap <S-Left> <esc>vh
+	inoremap <S-Right> <esc>vl
+	vnoremap <C-S-Left> b
+	vnoremap <C-S-Right> e
+	vnoremap <S-Left> h
+	vnoremap <S-Right> l
+
+	" paste over selection
+	vnoremap <C-v> d"+p
+
+	" smart add the braces
+	iabbrev {{ {<cr><cr>}<Esc>kA
 "}}}
 
 "AutoCmd{{{
@@ -282,8 +332,8 @@ set encoding=utf-8
 		autocmd FileType vim setlocal  foldmethod=marker
 		autocmd FileType vim setlocal foldlevel=0
 
-		autocmd FileType markdown setlocal nonumber
-		autocmd FileType markdown setlocal wrap
+		autocmd FileType markdown setlocal relativenumber
+		"autocmd FileType markdown setlocal wrap
 		autocmd FileType markdown setlocal colorcolumn=120,121,122,123,124,125,126,127,128,129,130
 		autocmd FileType markdown setlocal spell
 		autocmd FileType markdown setlocal expandtab
@@ -322,6 +372,13 @@ syntax sync minlines=1000
 		execute "normal! `0"
 		let @@ = savedReg
 	endfunction
+
+	function! CleanUp()
+		silent execute "normal! mhgg=G"		
+		silent execute ":%s/\\s\\+$//e"
+		silent execute "normal! <C-v><cr>`h"
+	endfunction
+	nnoremap <leader>kd :call CleanUp()<cr>
 
 	function! DragVertical(type, dir)
 		" move a selection around
@@ -378,6 +435,7 @@ syntax sync minlines=1000
 	command! Nom execute "%s///g"
 	command! BM execute "bufdo | bd!"
 	command! SAC execute 'normal! ggVG"+y'
+	command! WBD execute "w | bd"
 
 	function! MoveLine(lnum)
 		let currline=line('.')
@@ -406,6 +464,8 @@ syntax sync minlines=1000
 
 	command! Pst execute 'normal! "+p'
 
+	command! PasteOver execute 'normal! ggdG"+p'
+
 	command! -nargs=1 M execute "call MoveLine(<args>)"
 	command! -nargs=0 Md execute "call MoveLineDown()"
 	command! -nargs=0 Mu execute "call MoveLineUp()"
@@ -415,13 +475,11 @@ syntax sync minlines=1000
 		execute ":DBExecVisualSQL"
 		execute ":wincmd W"
 		execute ":%!pasty trimosql"
-		execute ":Nom"
 	endfunction
 	function! ExecuteSql()
 		execute ":DBExecSQLUnderCursor"
 		execute ":wincmd W"
 		execute ":%!pasty trimosql"
-		execute ":Nom"
 	endfunction
 
 	function! OpenHere()
@@ -431,5 +489,23 @@ syntax sync minlines=1000
 	function! OpenThis()
 		execute ":!start explorer.exe %:p:h"
 	endfunction
+
+	function! DiffToggle()
+		let diffon=&diff
+		if diffon ==# 0
+			execute ":windo diffthis"
+		else
+			execute ":windo diffoff"
+			execute ":q"
+		endif
+	endfunction
+	nnoremap <leader>dd :call DiffToggle()<cr>
+
+	command! Don execute ":windo diffthis"
+	command! Doff execute "call DiffToggle()"
 "}}}
 
+"variables {{
+let g:equestplusws = "c:\GitRepos\eqPlusClientServices\EquestPlusWS\EquestPlusWSInternal\EquestPlusWS.asmx.vb"
+"}}}
+"}

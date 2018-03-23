@@ -53,6 +53,12 @@ export ZSH=~/.oh-my-zsh
 
 ZSH_THEME="matthewrikard"
 
+BULLETTRAIN_STATUS_SHOW=true
+BULLETTRAIN_TIME_SHOW=true
+BULLETTRAIN_VIRTUALENV_SHOW=false
+BULLETTRAIN_RUBY_SHOW=false
+VIRTUAL_ENV_DISABLE_PROMPT=false
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)

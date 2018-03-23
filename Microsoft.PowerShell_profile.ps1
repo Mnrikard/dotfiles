@@ -1,9 +1,9 @@
-﻿Import-Module PsGet
+﻿#Import-Module PsGet
 Import-Module pscx
 Import-Module posh-git
 Import-Module PSReadline
 
-PSReadLine\Set-PSReadlineOption -EditMode Vi
+#PSReadLine\Set-PSReadlineOption -EditMode Vi
 
 
 $env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\bin"
@@ -168,6 +168,18 @@ function global:prompt {
 		Write-Host " "
 		promptWrite "PS $" White Blue Black
 		return " "
+}
+
+function Compare-Folders ($folder1, $folder2) {
+	Get-ChildItem $folder1 | Foreach-Object {
+		$name = $_.Name;
+		$hash = (Get-FileHash $_.FullName).Hash;
+		$fold2file = "$folder2/$name";
+		$hash2 = (Get-FileHash $fold2file).Hash;
+		if($hash -ne $hash2) {
+			Write-Host "$name mismatch";
+		}
+	}
 }
 
 & 'C:\GitRepos\recovery\poshSSH.ps1'
