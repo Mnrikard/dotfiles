@@ -4,6 +4,7 @@ alias -g gcomm="git commit"
 alias gfetch="git fetch -p"
 alias gstat="git status"
 alias gsql="git rm ChangeScripts/*/*/*.sql"
+alias githere="git --no-pager"
 
 function gpush {
 	branch=`git rev-parse --abbrev-ref HEAD`
@@ -15,14 +16,22 @@ function gpull {
 	git pull origin $branch --rebase
 }
 
-function browse {
-	base=`git remote -v | grep \(fetch\)`
-	base=${base/origin/}
-	base=${base/\(fetch\)/}
-	base=`echo $base | sed 's/:\(\w\)/\/\1/g' | sed 's/\.git//g' | sed 's/git@/https:\/\//g' | xargs`
-	branch=`git rev-parse --abbrev-ref HEAD`
 
-	url="$base/tree/$branch/"
+vstsTeam="gis-stratus"
+function browse {
+	base=`git remote -v | grep \(push\) | grep "origin" | sed -e 's/origin[ \t]*//g' -e 's/[ \t]*(push)//g'`
+	branch=`git rev-parse --abbrev-ref HEAD`
+	url=""
+
+	if [[ $base =~ github ]]; then
+		base=`echo $base | sed -e 's/:\(\w\)/\/\1/g' -e 's/\.git//g' -e 's/git@/https:\/\//g' | xargs`
+		url="$base/tree/$branch/"
+	fi
+
+	if [[ $base =~ visualstudio\.com ]]; then
+		url=`echo $base | gawk -F"/" '{print "visualstudio.com/"$4"/_git/"$6"?version=GB";}'`
+		url="https://$vstsTeam.$url$branch"
+	fi
 
 	echo $url
 

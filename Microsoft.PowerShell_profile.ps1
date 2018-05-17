@@ -24,6 +24,22 @@ function lst()
 	cls
 }
 
+function Get-MemoryUsage($processName)
+{
+	$x = 0;
+	(Get-Counter "\Process($processName*)\Working Set - Private").CounterSamples | ForEach-Object {
+		$kbs = "$($_.CookedValue/1kb)"
+		$x += $kbs;
+		Write-Host "$($_.InstanceName): $kbs"
+	};
+	Write-Host "$processName Total: $($x/1024.0)M";
+}
+
+function exhere()
+{
+	. explorer.exe $PWD
+}
+
 function SSL-Toggle
 {
 	$onoff = if((git config --global http.sslVerify) -eq "true") {"false"} else {"true"};

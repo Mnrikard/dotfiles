@@ -503,6 +503,15 @@ syntax sync minlines=1000
 
 	command! Don execute ":windo diffthis"
 	command! Doff execute "call DiffToggle()"
+
+	function! s:DiffWithSaved()
+		let filetype=&ft
+		diffthis
+		vnew | r # | normal! 1Gdd
+		diffthis
+		execute "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
+	endfunction
+	command! DiffSaved call s:DiffWithSaved()
 "}}}
 
 "variables {{
