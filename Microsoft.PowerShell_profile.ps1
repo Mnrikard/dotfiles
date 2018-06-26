@@ -149,6 +149,9 @@ function gpull {
 function gpush {
 	$branch = (git rev-parse --abbrev-ref HEAD)
 	& git push origin $branch
+	if ([System.Text.RegularExpressions.Regex]::IsMatch((git remote show),"github", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+		& git push github $branch
+	}
 }
 
 function gfetch {

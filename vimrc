@@ -168,6 +168,8 @@ set encoding=utf-8
 
 "Sets{{{
 
+set renderoptions=type:directx
+
 	if has("win32")
 		"set shell=shl.exe
 		"set shellcmdflag=/c\ ps
@@ -187,7 +189,8 @@ set encoding=utf-8
 	else
 		set shell=/bin/zsh
 	endif
-	set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI:qDRAFT
+	"set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI:qDRAFT
+	set guifont=Fira_Code:h10:cANSI:qDRAFT
 	set whichwrap+=<,>,[,]
 	set hidden
 	set confirm
@@ -242,6 +245,12 @@ set encoding=utf-8
 "}}}
 
 "Maps{{{
+
+	map <MiddleMouse> <Nop>
+	imap <MiddleMouse> <Nop>
+	map <2-MiddleMouse> <Nop>
+	imap <2-MiddleMouse> <Nop>
+
 	"copy to system clipboard
 	vnoremap <C-c> "+y
 	" leader+h searches for word under cursor
@@ -340,8 +349,9 @@ set encoding=utf-8
 		autocmd FileType markdown setlocal foldcolumn=5
 
 		autocmd FileType cs inoremap <buffer> ){ )<cr>{<cr>}<Esc>kA
-
 		autocmd FileType cs setlocal errorformat=%f(%l\\\,%c):\ %m\[
+
+		autocmd FileType html setlocal foldmethod=indent
 
 	augroup end
 	augroup FileTypeCmds

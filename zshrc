@@ -9,6 +9,9 @@ alias githere="git --no-pager"
 function gpush {
 	branch=`git rev-parse --abbrev-ref HEAD`
 	git push origin $branch
+	if [[ `git remote show` =~ github ]]; then;
+		git push github $branch
+	fi;
 }
 
 function gpull {
