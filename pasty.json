@@ -1,6 +1,7 @@
 {
 	"tabString":"\t",
 	"pluginsDirectory":"c:\\users\\mrikard\\pastyPlugins",
+	"localStyleSheet":"c:\\users\\mrikard\\gpasty.css",
 	"savedCommands":[
 		{"name":"hamburger","description":"hungry?","commands":[
 			{"name":"settext","args":["🍔"]}
@@ -69,7 +70,7 @@
 			{"name":"rep","args":["^((.|\n)+)$","('$1')"]},
 			{"name":"rep","args":["[\\da-f\\-',]{194},","$&\n"]}
 		]}
-		,{"name":"mdTable","description":"tables into markdown tables","commands":[
+		,{"name":"mdTableold","description":"tables into markdown tables","commands":[
 			{"name":"rep","args":["([ ]{2,}|\t+)","\t|\t"]},
 			{"name":"rep","args":["^.+$","| $&\t|","-m"]},
 			{"name":"rep","args":["^.+","$&\n|------|"]},

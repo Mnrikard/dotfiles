@@ -1,7 +1,7 @@
 local nl=$'\n'
 local rarr=$'\ue0b0'
 local larr=$'\ue0b2'
-local ret_status="${nl}%(?:%{$fg_bold[green]%}√ :%{$fg_bold[red]%}x )"
+local ret_status="${nl}%(?:%{$fg_bold[green]%}✔√ :%{$fg_bold[red]%}✘x )"
 PROMPT='%{$fg[black]$bg[cyan]$rarr%}%~%{$reset_color%}%{$fg[cyan]%}$rarr%{$reset_color%} $(git_prompt_info) ${ret_status}'
 RPROMPT=$'%F{red}%K{default}$larr%F{white}%K{red} %D{%H:%M:%S} %{$reset_color%}%f%k'
 

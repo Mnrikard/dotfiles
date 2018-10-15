@@ -20,6 +20,7 @@ set encoding=utf-8
 	Plugin 'OrangeT/vim-csharp'
 	Plugin 'PProvost/vim-ps1'
 	Plugin 'altercation/vim-colors-solarized'
+	"Plugin 'codelibra/log4jhighlighter'
 	Plugin 'ctrlpvim/ctrlp.vim'
 	Plugin 'ervandew/supertab'
 	Plugin 'gabrielelana/vim-markdown'
@@ -27,6 +28,7 @@ set encoding=utf-8
 	Plugin 'leafgarland/typescript-vim'
 	Plugin 'scrooloose/nerdtree'
 	Plugin 'scrooloose/syntastic'
+	Plugin 'sukima/xmledit'
 	Plugin 'terryma/vim-multiple-cursors'
 	Plugin 'tomtom/tlib_vim'
 	Plugin 'tpope/vim-dispatch'
@@ -58,12 +60,19 @@ set encoding=utf-8
 	if(has("python") || has("python3"))
 		let g:OmniSharp_server_type = 'roslyn'
 		let g:OmniSharp_prefer_global_sln = 1
-		let g:OmniSharp_server_path = 'C:\GitRepos\outside\omnisharp-roslyn\artifacts\publish\OmniSharp\default\net46\OmniSharp.exe'
 		let g:OmniSharp_host = "http://localhost:2000"
+
+		if has("win32")
+			let g:OmniSharp_server_path = 'C:\OmniSharp\omnisharp.http-win-x64\OmniSharp.exe'
+		else
+			let g:OmniSharp_server_path = '/mnt/c/OmniSharp/omnisharp.http-win-x64/OmniSharp.exe'
+			let g:OmniSharp_translate_cygwin_wsl = 1
+		endif
+
 		"Set the type lookup function to use the preview window instead of the status line
 		let g:OmniSharp_typeLookupInPreview = 0
 		"Timeout in seconds to wait for a response from the server
-		let g:OmniSharp_timeout = 5
+		let g:OmniSharp_timeout = 2
 		set noshowmatch
 
 		let g:SuperTabDefaultCompletionType = 'context'
@@ -191,6 +200,7 @@ set renderoptions=type:directx
 	endif
 	"set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI:qDRAFT
 	set guifont=Fira_Code:h10:cANSI:qDRAFT
+	set guioptions -=m
 	set whichwrap+=<,>,[,]
 	set hidden
 	set confirm
@@ -255,8 +265,8 @@ set renderoptions=type:directx
 	vnoremap <C-c> "+y
 	" leader+h searches for word under cursor
 	vnoremap <leader>h y:<C-U>let @/="<C-R>=@"<CR>"<CR>:set hls<CR>
-	"un-J this, or put a new line here
-	nnoremap <C-S-j> a<CR><Esc>kA<Esc>
+	""un-J this, or put a new line here
+	"nnoremap <C-S-j> a<CR><Esc>kA<Esc>
 	"clear highlighting
 	nnoremap <C-L> :nohl<CR><C-L>
 	" new line
@@ -266,14 +276,14 @@ set renderoptions=type:directx
 	nnoremap <C-S-tab> :bprev<cr>
 	"Ctrl+S saves
 	nnoremap <C-s> :w<cr>
-	"new line
-	nnoremap <Leader>o i<cr><Esc>
+	""new line
+	"nnoremap <Leader>o i<cr><Esc>
 	" paste the last line copied (not last deleted)
 	nnoremap <Leader>p "0p
 	" edit and save vimrc
 	nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 	nnoremap <leader>sv :source $MYVIMRC<cr>
-	" prettify
+	"" prettify
 	"nnoremap <leader>kd :execute "normal! mhgg=G<C-v><cr>`h"<cr>
 	"switch windows
 	nnoremap <leader>wh :wincmd W<cr>
@@ -292,15 +302,19 @@ set renderoptions=type:directx
 	" undo
 	nnoremap <C-z> u
 	" grep for word under cursor
-	nnoremap K :vimgrep /<cword>/g **/*<cr>:copen<cr>
+	nnoremap <leader>K :vimgrep /<cword>/g **/*<cr>:copen<cr>
 	" Ctrl+v works in normal mode too
 	nnoremap <C-v> "+p
 	"f6 moves windows
 	nnoremap <f6> :wincmd W<cr>
+	"paste over word
+	nnoremap <leader>rp ciw<C-r>0<esc>
+	"paste from system over everything
+	nnoremap <C-S-v> :PasteOver<cr>
 
 
 	"escape home rows
-	inoremap jjk <Esc>
+	"inoremap jjk <Esc>
 	" new line below
 	"inoremap <C-J> <Esc>jo
 	" new line above
@@ -311,12 +325,14 @@ set renderoptions=type:directx
 	" make Ctrl+V work as expected
 	inoremap <C-v> <C-r>+<right>
 	inoremap <C-S-v> <esc>"+pa
+	inoremap }k }<esc>O
 	"inoremap [] []<Esc>i
 	"Shift+arrows to select
 	inoremap <C-S-Left> <esc>vb
 	inoremap <C-S-Right> <esc>ve
 	inoremap <S-Left> <esc>vh
 	inoremap <S-Right> <esc>vl
+
 	vnoremap <C-S-Left> b
 	vnoremap <C-S-Right> e
 	vnoremap <S-Left> h
@@ -326,13 +342,14 @@ set renderoptions=type:directx
 	vnoremap <C-v> d"+p
 
 	" smart add the braces
-	iabbrev {{ {<cr><cr>}<Esc>kA
+	iabbrev {{ {<cr>}<Esc>O
 "}}}
 
 "AutoCmd{{{
 	augroup myAutoCmds
 		autocmd!
-		autocmd FileType xml,xsl,xslt setlocal foldmethod=syntax
+		autocmd BufNewFile, BufRead *.config set filetype=xml
+		autocmd FileType xml,xsl,xslt,xsd setlocal foldmethod=syntax
 		autocmd BufEnter * syntax sync minlines=1000
 
 		autocmd ColorScheme * highlight default spacesbad term=undercurl ctermbg=13 gui=undercurl guisp=#2aa198
@@ -341,11 +358,9 @@ set renderoptions=type:directx
 		autocmd FileType vim setlocal  foldmethod=marker
 		autocmd FileType vim setlocal foldlevel=0
 
-		autocmd FileType markdown setlocal relativenumber
 		"autocmd FileType markdown setlocal wrap
 		autocmd FileType markdown setlocal colorcolumn=120,121,122,123,124,125,126,127,128,129,130
 		autocmd FileType markdown setlocal spell
-		autocmd FileType markdown setlocal expandtab
 		autocmd FileType markdown setlocal foldcolumn=5
 
 		autocmd FileType cs inoremap <buffer> ){ )<cr>{<cr>}<Esc>kA
@@ -522,7 +537,24 @@ syntax sync minlines=1000
 		execute "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
 	endfunction
 	command! DiffSaved call s:DiffWithSaved()
-"}}}
+
+	function! NewFromClipboard()
+		execute ":enew"
+		execute 'normal! "+p'
+		" if the first non-whitespace character is an open angle bracket, then
+		" set this as XML
+		if search("\\%^\\_\\s*<","c") > 0	
+			execute ":setf xml"
+		endif
+	endfunction
+	nnoremap <C-S-n> :call NewFromClipboard()<cr>
+
+	function! RefreshOmni()
+		execute ":OmniSharpStopServer"
+		execute ":OmniSharpStartServer"
+	endfunction
+	command! OmniSharpRefreshServer call RefreshOmni()
+"}}
 
 "variables {{
 let g:equestplusws = "c:\GitRepos\eqPlusClientServices\EquestPlusWS\EquestPlusWSInternal\EquestPlusWS.asmx.vb"

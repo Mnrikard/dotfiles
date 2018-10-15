@@ -1,5 +1,5 @@
 ﻿#Import-Module PsGet
-Import-Module pscx
+#Import-Module pscx
 Import-Module posh-git
 Import-Module PSReadline
 
@@ -181,7 +181,7 @@ function global:prompt {
 		promptWrite " P O W E R S H E L L " Black DarkYellow Black
 		$realLASTEXITCODE = $LASTEXITCODE
 # Reset color, which can be messed up by Enable-GitColors
-		$Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
+#		$Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
 		Write-VcsStatus
 		$global:LASTEXITCODE = $realLASTEXITCODE
 		Write-Host " "
@@ -201,10 +201,10 @@ function Compare-Folders ($folder1, $folder2) {
 	}
 }
 
-& 'C:\GitRepos\recovery\poshSSH.ps1'
+#& 'C:\repos\recovery\poshSSH.ps1'
 
 Pop-Location
-Start-SshAgent -Quiet
+#Start-SshAgent -Quiet
 
 # SIG # Begin signature block
 # MIIEMwYJKoZIhvcNAQcCoIIEJDCCBCACAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB

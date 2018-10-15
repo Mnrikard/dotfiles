@@ -40,6 +40,11 @@ function browse {
 
 	if [ `uname -o` = "Cygwin" ]; then
 		cygstart $url
+	elif [[ `type explorer.exe` ]]; then
+		echo "opening explorer to $url"
+		explorer.exe "$url"
+	else
+		sensible-browser $url
 	fi
 }
 

@@ -6,7 +6,7 @@ exports.parms=[
 ];
 
 exports.helpText = "sum - Sums all the numbers in your clipboard";
-exports.oneLiner = "Creates a DO NOT EDIT BELOW line with your text";
+exports.oneLiner = "Sums all the numbers in your clipboard";
 
 escapeRegex = function(actualText){
 	return actualText.replace(/\(/g,"\\(")
