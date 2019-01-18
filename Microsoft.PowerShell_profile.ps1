@@ -5,6 +5,9 @@ Import-Module PSReadline
 
 #PSReadLine\Set-PSReadlineOption -EditMode Vi
 
+$corec = "http://sourcecontrol/svn/Gis/Development/Core%20Components"
+$corea = "http://sourcecontrol/svn/Gis/Development/Core%20Applications"
+$staticref = "http://sourcecontrol/svn/Gis/Development/StaticReferences"
 
 $env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\bin"
 
@@ -12,7 +15,7 @@ $global:GitPromptSettings.EnableWindowTitle = $null
 $Host.UI.RawUI.WindowTitle = "Powershell"
 
 # load scripts from directory in profile
-Get-ChildItem ('c:\cs\Tools\PoshScripts') | Where `
+Get-ChildItem ('c:\cs\tools\PoshScripts') | Where `
 { $_.Name -notlike '__*' -and $_.Name -like '*.ps1'} | ForEach `
 { . $_.FullName }
 
@@ -22,6 +25,11 @@ function lst()
 	$tmpListDir = Get-ItemProperty hkcu:\Environment | ForEach-Object {Get-ItemProperty $_.pspath} | where-object {$_.tempListDir} | Foreach-Object {$_.tempListDir}
 	cd $tmpListDir
 	cls
+}
+
+function base64($fileName)
+{
+	return [Convert]::ToBase64String([IO.File]::ReadAllBytes($fileName))
 }
 
 function Get-MemoryUsage($processName)
@@ -121,7 +129,7 @@ function DisplayCapture($line, $matches){
 
 function nunit($path)
 {
-	& 'C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe' $path
+	& 'C:\Program Files\NUnit\nunit3-console.exe' $path
 }
 
 function tl {
@@ -173,19 +181,27 @@ function promptWrite($txt,$color,$backColor, $nextBack){
 
 # Set up a simple prompt, adding the git prompt parts inside git repos
 function global:prompt {
+	$lastStat = $?
+	$realLASTEXITCODE = $LASTEXITCODE
+	# $? gets reset after each execution, whereas $LASTEXITCODE only gets updated when you run a command (so echo doesn't affect it)
 	$time = "$(Get-Date -format HH:mm:ss.fff)"
 		promptWrite $time White Cyan White
+
 
 		$loc = Get-Location
 		promptWrite $loc Blue White DarkYellow
 		promptWrite " P O W E R S H E L L " Black DarkYellow Black
-		$realLASTEXITCODE = $LASTEXITCODE
 # Reset color, which can be messed up by Enable-GitColors
 #		$Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
 		Write-VcsStatus
-		$global:LASTEXITCODE = $realLASTEXITCODE
 		Write-Host " "
-		promptWrite "PS $" White Blue Black
+		if($lastStat){
+			promptWrite "✓" Black White Blue
+		} else {
+			promptWrite "x" Black Red Blue
+		}
+		promptWrite "PS ${$lastStat}$" White Blue Black
+		$global:LASTEXITCODE = $realLASTEXITCODE
 		return " "
 }
 
@@ -205,6 +221,13 @@ function Compare-Folders ($folder1, $folder2) {
 
 Pop-Location
 #Start-SshAgent -Quiet
+
+# Chocolatey profile
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+  Import-Module "$ChocolateyProfile"
+}
+
 
 # SIG # Begin signature block
 # MIIEMwYJKoZIhvcNAQcCoIIEJDCCBCACAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
@@ -231,3 +254,5 @@ Pop-Location
 # aNFuswT+5Psr2/dRNWiK77Xhq7tTc4n/x4LCpeZTuIji3AQIh80GT1TtzyMo97FB
 # /1Y7Vzvai5XyQVFGJV8GWpcAJOLKYIo=
 # SIG # End signature block
+
+

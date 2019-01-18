@@ -68,7 +68,7 @@ function sslToggle {
 # Path to your oh-my-zsh installation.
 export ZSH=~/.oh-my-zsh
 
-ZSH_THEME="matthewrikard"
+ZSH_THEME="m2"
 
 BULLETTRAIN_STATUS_SHOW=true
 BULLETTRAIN_TIME_SHOW=true

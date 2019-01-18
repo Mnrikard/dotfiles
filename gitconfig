@@ -1,6 +1,6 @@
 [user]
-	name = Mnrikard
-	email = mnrikard@gmail.com
+	name = mrikard
+	email = matthew.rikard@hireright.com
 [push]
 	default = matching
 [color]
@@ -14,6 +14,7 @@
 	editor = vim
 	autocrlf = false
 	safecrlf = false
+	excludesFile = c:/Users/mrikard/gitignore
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
@@ -27,6 +28,11 @@
 [difftool "kdiff3"]
     path = C:/Program Files/KDiff3/kdiff3.exe
 [http]
-	sslVerify = false
+	sslVerify = true
 [winUpdater]
-	recentlySeenVersion = 2.19.1.windows.1
+	recentlySeenVersion = 2.20.1.windows.1
+[difftool "sourcetree"]
+	cmd = '' \"$LOCAL\" \"$REMOTE\"
+[mergetool "sourcetree"]
+	cmd = "'' "
+	trustExitCode = true

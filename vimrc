@@ -15,6 +15,7 @@ set encoding=utf-8
 	Plugin 'VundleVim/Vundle.vim'
 
 	"plugin on GitHub repo
+	Plugin 'ErichDonGubler/vim-sublime-monokai'
 	Plugin 'MarcWeber/vim-addon-mw-utils'
 	Plugin 'OmniSharp/Omnisharp-vim'
 	Plugin 'OrangeT/vim-csharp'
@@ -199,8 +200,7 @@ set renderoptions=type:directx
 		set shell=/bin/zsh
 	endif
 	"set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI:qDRAFT
-	set guifont=Fira_Code:h10:cANSI:qDRAFT
-	set guioptions -=m
+	
 	set whichwrap+=<,>,[,]
 	set hidden
 	set confirm
@@ -241,8 +241,10 @@ set renderoptions=type:directx
 	set background=dark
 
 	if has('gui_running')
+		set guifont=Fira_Code:h10:cANSI:qDRAFT
+		set guioptions -=m
 		set guioptions-=T  " no toolbar
-		colorscheme vividchalk
+		colorscheme sublimemonokai
 	else
 		colorscheme vividchalk
 	endif
@@ -548,6 +550,8 @@ syntax sync minlines=1000
 		endif
 	endfunction
 	nnoremap <C-S-n> :call NewFromClipboard()<cr>
+	"inoremap <C-S-n> <Esc>:call NewFromClipboard()<cr>
+	
 
 	function! RefreshOmni()
 		execute ":OmniSharpStopServer"
