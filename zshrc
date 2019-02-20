@@ -40,7 +40,10 @@ function browse {
 
 	if [ `uname -o` = "Cygwin" ]; then
 		cygstart $url
-	elif [[ `type explorer.exe` ]]; then
+	elif [[ not("$(type cmd.exe)" = "cmd.exe not found") ]]; then
+		echo "opening in cmd.exe"
+		cmd.exe /c start "$url"
+	elif [[ not("$(type explorer.exe)" = "explorer.exe not found") ]]; then
 		echo "opening explorer to $url"
 		explorer.exe "$url"
 	else

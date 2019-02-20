@@ -5,6 +5,8 @@ Import-Module PSReadline
 
 #PSReadLine\Set-PSReadlineOption -EditMode Vi
 
+Set-PSReadlineOption -ShowToolTips -BellStyle Visual
+
 $corec = "http://sourcecontrol/svn/Gis/Development/Core%20Components"
 $corea = "http://sourcecontrol/svn/Gis/Development/Core%20Applications"
 $staticref = "http://sourcecontrol/svn/Gis/Development/StaticReferences"
@@ -32,16 +34,6 @@ function base64($fileName)
 	return [Convert]::ToBase64String([IO.File]::ReadAllBytes($fileName))
 }
 
-function Get-MemoryUsage($processName)
-{
-	$x = 0;
-	(Get-Counter "\Process($processName*)\Working Set - Private").CounterSamples | ForEach-Object {
-		$kbs = "$($_.CookedValue/1kb)"
-		$x += $kbs;
-		Write-Host "$($_.InstanceName): $kbs"
-	};
-	Write-Host "$processName Total: $($x/1024.0)M";
-}
 
 function exhere()
 {

@@ -14,7 +14,7 @@
 	editor = vim
 	autocrlf = false
 	safecrlf = false
-	excludesFile = c:/Users/mrikard/gitignore
+	excludesfile = C:\\Users\\mrikard\\gitignore
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
@@ -28,7 +28,7 @@
 [difftool "kdiff3"]
     path = C:/Program Files/KDiff3/kdiff3.exe
 [http]
-	sslVerify = true
+	sslVerify = false
 [winUpdater]
 	recentlySeenVersion = 2.20.1.windows.1
 [difftool "sourcetree"]

@@ -39,6 +39,7 @@ set encoding=utf-8
 	Plugin 'tpope/vim-vividchalk'
 	Plugin 'vim-airline/vim-airline'
 	Plugin 'vim-airline/vim-airline-themes'
+	"Plugin 'vim-bgimg'
 	Plugin 'vim-scripts/ctags.vim'
 	Plugin 'vim-scripts/dbext.vim'
 
@@ -328,6 +329,7 @@ set renderoptions=type:directx
 	inoremap <C-v> <C-r>+<right>
 	inoremap <C-S-v> <esc>"+pa
 	inoremap }k }<esc>O
+	inoremap uuuu <esc>viwgUea
 	"inoremap [] []<Esc>i
 	"Shift+arrows to select
 	inoremap <C-S-Left> <esc>vb

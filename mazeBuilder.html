@@ -9,13 +9,19 @@
 var ctx = canvas.getContext("2d");
 var grid;
 
-var cellsize=10;
-var droneSpeed = 50;
+var cellsize=20;
+var droneSpeed = 100;
 var rad = parseInt(cellsize/2);
 var height = 25;
-var width = 50;
+var width = 25;
 var solved = false;
 var drones = [];
+
+var left = -1;
+var right = 1;
+var above = -1;
+var below = 1;
+var same = 0;
 
 function drone(cell){
 	if(drones && drones.length > 0){
@@ -26,13 +32,22 @@ function drone(cell){
 
 function thisDrone(){return drones[drones.length-1];}
 
-function possibleDirections(curCell){
+function cellExists(rowIndex, cellIndex){
+	return (grid.rows[rowIndex] && grid.rows[rowIndex].cols[cellIndex]);
+}
+
+function cellVisited(rowIndex, cellIndex){
+	return grid.rows[rowIndex].cols[cellIndex].visited;
+}
+
+function possibleDirections(){
+	var curCell = thisDrone().oncell;
 	if(curCell.end){return [];}
-	var motions = [{x:-1,y:0},{x:1,y:0},{x:0,y:-1},{x:0,y:1}];
+	var motions = [{x:left,y:same},{x:right,y:same},{x:same,y:above},{x:same,y:below}];
 	var possibles = [];
 	motions.forEach(function(mot){
-		if(grid.rows[curCell.row+mot.y] && grid.rows[curCell.row+mot.y].cols[curCell.col+mot.x]){
-			if(!grid.rows[curCell.row+mot.y].cols[curCell.col+mot.x].visited){
+		if(cellExists(curCell.row+mot.y, curCell.col+mot.x)){
+			if(!cellVisited(curCell.row+mot.y, curCell.col+mot.x)){
 				possibles.push(mot);
 			}
 		}
@@ -40,18 +55,19 @@ function possibleDirections(curCell){
 	return possibles;
 }
 
-function decideDirection(){
-	var thisdrone = thisDrone();
-	var possibles = possibleDirections(thisdrone.oncell);
+function backUp(){
+	var curCell = thisDrone().visited.pop();
+	var prevCell = thisDrone().visited.pop();
+	var newx = prevCell.col-curCell.col;
+	var newy = prevCell.row-curCell.row;
+	return {x:newx,y:newy};
+}
 
-	while(possibles.length === 0){
-		drawCell(thisdrone.oncell);
-		var curCell = thisdrone.visited.pop();
-		if(curCell.row === thisdrone.oncell.row && curCell.col === thisdrone.oncell.col){
-			curCell = thisdrone.visited.pop();
-		}
-		thisdrone.oncell = curCell;
-		possibles = possibleDirections(thisdrone.oncell);
+function decideDirection(){
+	var possibles = possibleDirections();
+
+	if(possibles.length === 0){
+		return backUp();
 	}
 
 	return possibles[parseInt(Math.random()*possibles.length)];
@@ -69,15 +85,6 @@ function boxesAreLeft(){
 	return false;
 }
 
-function drawRestOfMaze(endCell){
-	endCell.dead = true;
-	var boxes = [];
-	while(boxesAreLeft()){
-		var motion = decideDirection();
-		move(motion.x,motion.y);
-	}
-	return false;
-}
 
 function automateDrone(){
 	var motion = decideDirection();
@@ -89,8 +96,6 @@ function automateDrone(){
 	if(drones[drones.length-1].oncell.end){
 		solved = true;
 		setTimeout(automateDrone,droneSpeed);
-		//drawRestOfMaze(thisDrone().oncell.end);
-		//alert("found the end");
 	} else {
 		setTimeout(automateDrone,droneSpeed);
 	}
@@ -140,13 +145,13 @@ function move(x,y){
 		return;
 	}
 
-	if(x == 1){
+	if(x == right){
 		breakWall(thisdrone.oncell,"right");
-	} else if (x == -1) {
+	} else if (x == left) {
 		breakWall(thisdrone.oncell,"left");
-	} else if (y == -1) {
+	} else if (y == above) {
 		breakWall(thisdrone.oncell,"top");
-	} else if (y == 1) {
+	} else if (y == below) {
 		breakWall(thisdrone.oncell,"bottom");
 	}
 
@@ -205,11 +210,6 @@ function drawCell(box){
 		ctx.fill();
 	}
 
-	//if(box.dead){
-	//	ctx.fillStyle = "#cccccc";
-	//	ctx.rect(x+1,y+1,cellsize-2,cellsize-2);
-	//	ctx.fill();
-	//}
 }
 
 
@@ -246,6 +246,8 @@ function initBoard(rowcount,colcount){
 		}
 		grid.rows.push(row);
 	}
+
+	grid.rows[0].cols[0].visited = true;
 	getEnds();
 }
 
@@ -253,19 +255,19 @@ function breakWall(cell,wall){
 	var othercell,otherwall;
 	switch(wall){
 		case "top":
-			othercell = grid.rows[cell.row-1].cols[cell.col];
+			othercell = grid.rows[cell.row + above].cols[cell.col];
 			otherwall = "bottom";
 			break;
 		case "bottom":
-			othercell = grid.rows[cell.row+1].cols[cell.col];
+			othercell = grid.rows[cell.row + below].cols[cell.col];
 			otherwall = "top";
 			break;
 		case "left":
-			othercell = grid.rows[cell.row].cols[cell.col-1];
+			othercell = grid.rows[cell.row].cols[cell.col + left];
 			otherwall = "right";
 			break;
 		case "right":
-			othercell = grid.rows[cell.row].cols[cell.col+1];
+			othercell = grid.rows[cell.row].cols[cell.col + right];
 			otherwall = "left";
 			break;
 	}

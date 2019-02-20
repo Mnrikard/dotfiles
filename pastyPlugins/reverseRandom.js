@@ -18,42 +18,41 @@ exports.edit=function(input, switches){
 	var sepRx = new RegExp(escapeRegex(sep),"gi");
 	var items = input.split(sepRx);
 
-	"abcdefghijklmnopqrstuvwxyz".split("").forEach(function(x,i){
+	var origAlpha = "abcdefghijklmnopqrstuvwxyz";
+	origAlpha.split("").forEach(function(x,i){
 		alpha[x] = Math.random();
 	});
 
 	items.sort(reverseRand);
+	//stick the random alphabet on the list so you can see how it worked.
+	items.push(origAlpha.split("").sort(randoSort).join(""));
 	
 	return items.join(sep);
 };
 
 function reverseRand(a,b){
+	return randoSort(b,a);
+}
+
+function randoSort(a,b){
 	for(var i=0;i<a.length;i++){
-		if(!b[i]) return 1;
+		if(!b[i]) return -1;
 		ach = a[i].toLowerCase();
 		bch = b[i].toLowerCase();
 
-		if(ach == bch){
+		if(ach === bch){
 			continue;
 		}
 		if(!alpha[ach] || !alpha[bch]){
 			if(ach.charCodeAt(0) > bch.charCodeAt(0)){
-				return -1;
+				return 1;
 			}
-			return 1;
+			return -1;
 		}
 
-		if(alpha[ach] > alpha[bch]) {return -1;}
-		if(alpha[ach] < alpha[bch]) {return 1;}
+		if(alpha[ach] > alpha[bch]) {return 1;}
+		if(alpha[ach] < alpha[bch]) {return -1;}
 	}
 	return 0;
 }
 
-/*
-
- * Beach
- * Bear
- * Apple
- * Arizona
- * Aardvark
- * */
