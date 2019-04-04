@@ -3,7 +3,7 @@ alias gadd="git add -A"
 alias -g gcomm="git commit"
 alias gfetch="git fetch -p"
 alias gstat="git status"
-alias gsql="git rm ChangeScripts/*/*/*.sql"
+alias gsql="git rm ChangeScripts/Rollback/*/*.sql;git rm ChangeScripts/Upgrade/*/*.sql"
 alias githere="git --no-pager"
 
 function gpush {
@@ -19,6 +19,14 @@ function gpull {
 	git pull origin $branch --rebase
 }
 
+chr() {
+	[ "$1" -lt 256 ] || return 1
+	printf "\\$(printf '%03o' "$1")"
+}
+
+ord() {
+	LC_CTYPE=C printf '%d' "'$1"
+}
 
 vstsTeam="gis-stratus"
 function browse {

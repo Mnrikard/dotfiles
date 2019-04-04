@@ -384,6 +384,18 @@ syntax on
 syntax sync minlines=1000
 
 "Commands {{{
+	function! s:WhiteSpaceIgnore()
+		execute ':set diffopt+=iwhite'
+		execute ':diffu'
+	endfunction
+	command! -nargs=0 WhiteSpaceIgnore execute "call s:WhiteSpaceIgnore()"
+
+	function! s:SearchOnlyDiff()
+		execute ":set diffopt+=filler,context:0"
+		execute ":set fdo-=search"
+	endfunction
+	command! -nargs=0 SearchOnlyDiff execute "call s:SearchOnlyDiff()"
+
 	function! Refactor(type)
 		let toname=input('New Name:')
 

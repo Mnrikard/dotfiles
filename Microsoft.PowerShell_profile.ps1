@@ -5,6 +5,8 @@ Import-Module PSReadline
 
 #PSReadLine\Set-PSReadlineOption -EditMode Vi
 
+Set-Alias -Name ~ -Value $env:UserProfile
+
 Set-PSReadlineOption -ShowToolTips -BellStyle Visual
 
 $corec = "http://sourcecontrol/svn/Gis/Development/Core%20Components"
@@ -117,6 +119,28 @@ function DisplayCapture($line, $matches){
 			Write-Host $ln.TrimEnd() -ForegroundColor Green -NoNewline
 	}
 	Write-Host ""
+}
+
+function Execute-SqlFiles($server){
+	if($PWD -match "Rollback"){
+		gci *.sql | sort -Descending | ForEach-Object { Write-Host $_.Name; Execute-OrVim "$($_.FullName)" $server; }
+	} else {
+		gci *.sql | sort | ForEach-Object { Write-Host $_.Name; Execute-OrVim "$($_.FullName)" $server; }
+	}
+}
+
+function Execute-OrVim($file, $server){
+	$output = (& sqlcmd -S $server -E -i $file)
+	if($output -match "Msg \d+"){
+		Write-Host $output -ForegroundColor red
+
+		$doedit = (Read-Host "Edit in Vim? [Y|n]");
+		if(!($doedit -match "n")){
+			& vim $file;
+		}
+	} else {
+		Write-Host $output -ForegroundColor green
+	}
 }
 
 function nunit($path)
