@@ -6,6 +6,7 @@ alias gstat="git status"
 alias gsql="git rm ChangeScripts/Rollback/*/*.sql;git rm ChangeScripts/Upgrade/*/*.sql"
 alias githere="git --no-pager"
 
+
 function gpush {
 	branch=`git rev-parse --abbrev-ref HEAD`
 	git push origin $branch
@@ -41,6 +42,11 @@ function browse {
 
 	if [[ $base =~ visualstudio\.com ]]; then
 		url=`echo $base | gawk -F"/" '{print "visualstudio.com/"$4"/_git/"$6"?version=GB";}'`
+		url="https://$vstsTeam.$url$branch"
+	fi
+
+	if [[ $base =~ "vs-ssh.visualstudio.com:v3" ]]; then
+		url=`echo $base | gawk -F"/" '{print "visualstudio.com/"$3"/_git/"$4"?version=GB";}'`
 		url="https://$vstsTeam.$url$branch"
 	fi
 

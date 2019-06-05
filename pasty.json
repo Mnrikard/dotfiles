@@ -1,266 +1,1254 @@
 {
-	"tabString":"\t",
-	"pluginsDirectory":"c:\\users\\mrikard\\pastyPlugins",
-	"localStyleSheet":"c:\\users\\mrikard\\gpasty.css",
-	"savedCommands":[
-		{"name":"hamburger","description":"hungry?","commands":[
-			{"name":"settext","args":["🍔"]}
-		]}
-		,{"name":"numlist","description":"List of numbers with parenthesis around it","commands":[
-			{"name":"grep","args":["\\-?\\d+(\\.\\d+)?", ",", "-L"],"description":"greps all matches and separates with comma"},
-			{"name":"rep","args":["(.|\n)+", "($&)"],"description":"put parenthesis around everything"},
-			{"name":"rep","args":["(.{80,90},)", "$1\n"],"description":"keep the line length sensible"}
-		]}
-		,{"name":"smash","description":"smashes empty lines","commands":[
-			{"name":"rep","args":["\n\\s*", "\n"]}
-		]}
-		,{"name":"makeXpath","description":"make an xpath","commands":[
-			{"name":"rep","args":["<\\!\\-\\-.*\\-\\->",""],"description":"delete comments"},
-			{"name":"rep","args":["<[^>]+/>",""],"description":"delete self-closing tags"},
-			{"name":"rep","args":["<([^> ]+)[^>]*>(.|\n)+</\\1>",""],"description":"remove nodes not in path"},
-			{"name":"rep","args":["<([^> ]+)[^>]*>","<$1>"],"description":"remove attributes"},
-			{"name":"rep","args":["<!\\-\\-.*\\-\\->",""],"description":"delete comments"},
-			{"name":"rep","args":["^[ \t]+","","-mig"],"description":"trim lines"},
-			{"name":"smash","args":[],"description":"get rid of multiple lines"},
-			{"name":"rep","args":["\n","/"],"description":"replace new lines with /"},
-			{"name":"rep","args":["(\\s|\\>|\\<)",""],"description":"get rid of non-pathy characters"},
-			{"name":"rep","args":["^.","//$0"],"description":"put a // at the front"}
-		]}
-		,{"name":"hulkSmash","description":"smash it down to one line","commands":[
-			{"name":"smash","args":[]},
-			{"name":"rep","args":["\\s*\n\\s*", ""]}
-		]}
-		,{"name":"enTab","description":"converts spaces to tabs","commands":[
-			{"name":"rep","args":["    ", "\t"]}
-		]}
-		,{"name":"deTab","description":"converts tabs to spaces","commands":[
-			{"name":"rep","args":["\t", "    "]}
-		]}
-		,{"name":"sqlSafe","description":"replaces apostrophes with two apostrophes","commands":[
-			{"name":"rep","args":["'","''"]}
-		]}
-		,{"name":"sqlRethrow","description":"Catch/rollback/throw","commands":[
-			{"name":"settext","args":["BEGIN CATCH\n\tROLLBACK TRANSACTION\n\tDECLARE @ErrorMessage NVARCHAR(4000);\n\tDECLARE @ErrorSeverity INT;\n\tDECLARE @ErrorState INT;\n\n\tSELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();\n\tRAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);\nEND CATCH\n"]}
-		]}
-		,{"name":"sqlUnsafe","description":"replaces two apostrophes with one apostrophe","commands":[
-			{"name":"rep","args":["''","'"]}
-		]}
-		,{"name":"list","description":"replaces new lines with commas","commands":[
-			{"name":"rep","args":["\n+", ","]}
-		]}
-		,{"name":"strList","description":"Same as \"list\" but adds apostrophes around the list items","commands":[
-			{"name":"smash","args":[]},
-			{"name":"rep","args":[ "'","''"],"description":"convert singe apos to escaped"},
-			{"name":"rep","args":["\n","','"],"description":"each line is a string"},
-			{"name":"rep","args":["[\\d\\D]+","('$&')"],"description":"put parens around everything"},
-			{"name":"rep","args":[".{80,140},","$&\n"],"description":"keep the line length sensible"}
-		]}
-		,{"name":"trimEnds","description":"Removes whitespace at the end of the line","commands":[
-			{"name":"rep","args":["[ \t]+$","","-mig"]}
-		]}
-		,{"name":"trimLines","description":"Removes whitespace at both ends of the line","commands":[
-			{"name":"rep","args":["^[ \t]*(.+?)[ \t]*$","$1","-mig"]}
-		]}
-		,{"name":"doubleQuote","description":"quotation mark to double quotation mark","commands":[
-			{"name":"rep","args":["\"","\"\""]}
-		]}
-		,{"name":"GuidList","description":"Gets a list of Guid's separated by commas, enclosed in apostrophes","commands":[
-			{"name":"grep","args":["[\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}","','","-L"]},
-			{"name":"dedup","args":["','"]},
-			{"name":"rep","args":["^((.|\n)+)$","('$1')"]},
-			{"name":"rep","args":["[\\da-f\\-',]{194},","$&\n"]}
-		]}
-		,{"name":"mdTableold","description":"tables into markdown tables","commands":[
-			{"name":"rep","args":["([ ]{2,}|\t+)","\t|\t"]},
-			{"name":"rep","args":["^.+$","| $&\t|","-m"]},
-			{"name":"rep","args":["^.+","$&\n|------|"]},
-			{"name":"columnAlign","args":["1"]}
-		]}
-		,{"name":"sprocMe","description":"turn query into stored procedure","commands":[
-			{"name":"rep","args":["((.|\n)+)", "USE [{{Database}}]\nGO\n\nIF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{{Stored Procedure Name}}]') AND type in (N'P', N'PC'))\nDROP PROCEDURE [dbo].[{{Stored Procedure Name}}]\nGO\n\nUSE [{{Database}}]\nGO\n\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE PROCEDURE [dbo].[{{Stored Procedure Name}}]\n@VARS\nAS\nBEGIN\n\n$1\n\nEND\nGO\n\nGRANT EXECUTE ON [dbo].[{{Stored Procedure Name}}] TO [DBRole_GISWEBUsers] AS [dbo]\nGO\n"]}
-		], "parameters":[
-			{"name":"Database", "defaultValue":null},
-			{"name":"Stored Procedure Name", "defaultValue":null}
-		]}
-		,{"name":"messageLog", "description":"formats a log I normally see","commands":[
-			{"name":"rep", "args":["(\\w+\\[)([^\\]]{20,})", "$1\n$2"]},
-			{"name":"rep", "args":["([^\\[]{20,})(\\])", "$1\n$2"]},
-			{"name":"rep", "args":["(\\])\\s*", "$1\n"]},
-			{"name":"xml", "args":[]}
-		]}
-		,{"name":"unRegion", "description":"I hate regions in code","commands":[
-			{"name":"rep", "args":["#region(.*)","//$1"]},
-			{"name":"rep", "args":["#endregion.*\n",""]}
-		]}
-		,{"name":"crVer", "description":"CR Verification","commands":[
-			{"name":"settext","args":["## Verification Plan Details:\n * What should be tested and who will do the testing\n\n## Monitoring Plan Details;\n  * Details on monitoring the change for any negative effects\n\n## Risk and Impact of the code move:\n  * Systems Impacted\n  * Customers Impacted\n  * Operations Impact\n  * Security Risk or Impact\n  * Other\n"]}
-		]}
-		,{"name":"xslt", "description":"boilerplate xslt 1.0", "commands":[
-			{"name":"settext", "args":["<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n\t<xsl:output indent=\"yes\" method=\"xml\" version=\"1.0\" encoding=\"UTF-8\"/>\n\t<xsl:template match=\"@* | node()\">\n\t\t<xsl:copy>\n\t\t\t<xsl:apply-templates select=\"@* | node()\"/>\n\t\t</xsl:copy>\n\t</xsl:template>\n</xsl:stylesheet>\n"]}
-		]}
-		,{"name":"connString", "description":"Generates a SQL Server connection string", "commands":[
-			{"name":"settext","args":["Data Source={{Server}};Initial Catalog={{Database}};Integrated Security=True;Application Name={{Application Name}};"]}
-		],"parameters":[
-			{"name":"Server", "defaultValue":null},
-			{"name":"Database", "defaultValue":null},
-			{"name":"Application Name", "defaultValue":null}
-		]}
-		,{"name":"deadcode", "description":"The dead code GUID", "commands":[
-			{"name":"settext", "args":["00000000-DEAD-C0DE-0000-000000000000"]}
-		]}
-		,{"name":"cursor", "description":"tsql cursor", "commands":[
-			{"name":"rep", "args":["(.|\n)*select ((.|\n)+)\\sfrom(.|\n)+", "/*vars*/Declare $2;\n\nDeclare {{Cursor Name}} CURSOR FAST_FORWARD FOR \n\t$&\n\nOPEN {{Cursor Name}}\nFETCH NEXT FROM {{Cursor Name}} \nINTO $2 \n\nWHILE @@FETCH_STATUS = 0 \nBEGIN \n\t--row specific functions\n\tFETCH NEXT FROM {{Cursor Name}} \n\tINTO $2 \nEND \nCLOSE {{Cursor Name}} \nDEALLOCATE {{Cursor Name}}"]}
-			,{"name":"rep", "args":["(\\/\\*vars\\*\\/Declare.+)(\\b\\w+\\b)", "$1@$2"]}
-			,{"name":"rep", "args":["(INTO.+)(\\b\\w+\\b)", "$1@$2"]}
-		],"parameters":[
-			{"name":"Cursor Name","defaultValue":null}
-		]}
-		,{"name":"mdLink", "description":"Markdown links","commands":[
-			{"name":"rep", "args":[".+", "[{{link text}}]($& \"{{alt text}}\")"]},
-			{"name":"rep", "args":[" \"\"",""]},
-			{"name":"rep", "args":["\\[\\]\\((.+)\\)","[$1]"]}
-		],"parameters":[
-			{"name":"link text", "defaultValue":null},
-			{"name":"alt text", "defaultValue":""}
-		]}
-		,{"name":"sqlCase","description":"Upper case key-words in SQL","commands":[
-			{"name":"entab", "args":[]},
-			{"name":"rep","args":[
-				"\\b(abs|after|all|alter|and|as|avg|begin|between|by|nonclustered|clustered|cascade|case|cast|catch|ceiling|charindex|close|coalesce|column|commit|constraint|contains|continue|convert|count|create|cube|cursor|dateadd|datediff|datename|datepart|day|deallocate|declare|default|delete|desc|distinct|drop|else|end|escape|except|exec|execute|exists|exit|fetch|first|floor|for|from|function|get|getdate|go|goto|grant|group|grouping|having|host_id|host_name|hour|identity|if|in|index|inner|insert|into|is|isdate|isnull|join|key|left|len|length|like|lower|ltrim|max|min|minute|mod|modify|month|newid|next|nolock|not|null|off|on|or|order|out|outer|output|partition|power|raw|references|replace|return|returns|right|rollback|rollup|round|row|row_number|rows|rtrim|second|select|set|soundex|sqrt|substring|sum|sysdatetime|table|then|to|transaction|trigger|truncate|try|union|update|upper|use|values|view|when|where|with|while|year)\\b",
-				"\\u$1"
-			]}
-		]}
-		,{"name":"cleanInsert","commands":[
-			{"name":"insert","args":["{{table name}}"]},
-			{"name":"rep","args":["'\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\.\\d{3,6}'","GETDATE()"]},
-			{"name":"rep","args":["'geninfo\\.+?'","SUSER_NAME()"]}
-		],"parameters":[
-			{"name":"table name","defaultValue":null}
-		]}
-		,{"name":"insertWithXml","description":"Insert with XML columns (which are multiline)","commands":[
-			{"name":"rep","args":[">\\s+<", "><"]},
-			{"name":"insert","args":["{{table name}}"]},
-			{"name":"xml","args":[]}
-		],"parameters":[
-			{"name":"table name", "defaultValue":null}
-		]}
-		,{"name":"tableVar","description":"creates a table variable from Alt+F1 data","commands":[
-			{"name":"rep","args":["(.+?)\t(.+?)\t(.+?)\t(.+?).+","$1 $2($4)"]}
-			,{"name":"rep","args":["\n",","]}
-			,{"name":"rep","args":["(?!=(varchar|decimal))\\(\\d+\\)",""]}
-			,{"name":"rep","args":[".+","declare @{{variable name}} table ($&)"]}
-		],"parameters":[
-			{"name":"variable name","defaultValue":null}
-		]}
-		,{"name":"emoji","description":"converts common representations to emoji","commands":[
-			{"name":"rep","args":[":\\)","☺️"],"description":":)"},
-			{"name":"rep","args":[":'\\)","😂"],"description":":')"},
-			{"name":"rep","args":["':\\)","😅"],"description":"':)"}
-			,{"name":"rep","args":[";\\)","😉"],"description":";)"}
-			,{"name":"rep","args":[":\\(","☹"],"description":":("}
-			,{"name":"rep","args":["X\\|","😣"],"description":"X|"}
-		]}
-		,{"name":"sqlcs","commands":[
-			{"name":"settext","args":["using (var conn = new SqlConnection(ConnectionString))\n{\n\tconn.Open();\n\tusing (var cmd = conn.CreateCommand())\n\t{\n\t\tcmd.CommandText = \"\";\n\t\tcmd.CommandType = CommandType.StoredProcedure;\n\t\tcmd.Parameters.AddWithValue(\"@parm\", parmValue);\n\t\tusing (SqlDataReader dr = cmd.ExecuteReader())\n\t\t{\n\t\t\twhile (dr.Read())\n\t\t\t{\n\t\t\t\t//do something\n\t\t\t}\n\t\t}\n\t}\n}"]}
-		]}
-		,{"name":"ago","commands":[
-			{"name":"settext","args":["dateadd(n,-{{number of minutes}},getdate())"]}
-		],"parameters":[
-			{"name":"number of minutes","defaultValue":"5"}
-		]}
-		,{"name":"sqlStringParse","description":"Provides a way to parse an SQL string looking for certain words","commands":[
-			{"name":"settext","args":["case when {{Data Column}} like '%{{Left Boundary}}%' then substring({{Data Column}}, patindex('%{{Left Boundary}}%', {{Data Column}})+len('{{Left Boundary}}'), CharIndex('{{Right Boundary}}',{{Data Column}},patindex('%{{Left Boundary}}%', {{Data Column}})+len('{{Left Boundary}}'))-(patindex('%{{Left Boundary}}%', {{Data Column}})+len('{{Left Boundary}}'))) else '' end"]}
-		],"parameters":[
-			{"name":"Data Column","defaultValue":null},
-			{"name":"Left Boundary","defaultValue":null},
-			{"name":"Right Boundary","defaultValue":null}
-		]}
-		,{"name":"sqlCsProps","description":"Copy Alt+F1 of table (or sys.columns) and get cs properties","commands":[
-			{"name":"rep", "args":["^(\\w+)\\t(\\w+)\\t.*","public $2 $1 { get; set; }","-m"]},
-			{"name":"rep", "args":["\\bdatetime\\b", "DateTime"]},
-			{"name":"rep", "args":["\\bvarchar\\b", "string"]},
-			{"name":"rep", "args":["\\bimage\\b", "byte[]"]},
-			{"name":"rep", "args":["\\btext\\b", "string"]},
-			{"name":"rep", "args":["\\buniqueidentifier\\b", "Guid"]},
-			{"name":"rep", "args":["\\bdate\\b", "DateTime"]},
-			{"name":"rep", "args":["\\btime\\b", "DateTime"]},
-			{"name":"rep", "args":["\\bdatetime2\\b", "DateTime"]},
-			{"name":"rep", "args":["\\bdatetimeoffset\\b", "TimeSpan"]},
-			{"name":"rep", "args":["\\btinyint\\b", "byte"]},
-			{"name":"rep", "args":["\\bsmallint\\b", "byte"]},
-			{"name":"rep", "args":["\\bsmalldatetime\\b", "DateTime"]},
-			{"name":"rep", "args":["\\breal\\b", "double"]},
-			{"name":"rep", "args":["\\bmoney\\b", "decimal"]},
-			{"name":"rep", "args":["\\bdatetime\\b", "DateTime"]},
-			{"name":"rep", "args":["\\bntext\\b", "string"]},
-			{"name":"rep", "args":["\\bbit\\b", "bool"]},
-			{"name":"rep", "args":["\\bnumeric\\b", "int"]},
-			{"name":"rep", "args":["\\bsmallmoney\\b", "decimal"]},
-			{"name":"rep", "args":["\\bbigint\\b", "long"]},
-			{"name":"rep", "args":["\\bvarbinary\\b", "byte[]"]},
-			{"name":"rep", "args":["\\bbinary\\b", "byte[]"]},
-			{"name":"rep", "args":["\\bchar\\b", "string"]},
-			{"name":"rep", "args":["\\btimestamp\\b", "TimeStamp"]},
-			{"name":"rep", "args":["\\bnvarchar\\b", "string"]},
-			{"name":"rep", "args":["\\bnchar\\b", "string"]},
-			{"name":"rep", "args":["\\bxml\\b", "XDocument"]}
-		]}
-		,{"name":"strict","description":"HTML strict","commands":[
-			{"name":"settext","args":["<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n  <head>\n    <title>xxxx</title>\n  </head>\n  <body>\n\n  </body>\n</html>\n"]}
-		]}
-		,{"name":"remove","description":"Replace with nothing","commands":[
-			{"name":"rep","args":["{{pattern}}", ""]}
-		],"parameters":[
-			{"name":"pattern", "defaultValue":null}
-		]}
-		,{"name":"xmlWatchConfigurator","description":"assembly info for Enterprise Logging","commands":[
-			{"name":"settext", "args":["[assembly: Gis.Enterprise.Logging.Client.log4net.Config.XmlConfigurator(Watch = true)]"]}
-		]}
-		,{"name":"byteToGig","description":"bytes to GigaBytes","commands":[
-			{"name":"rep", "args":["\\D*(\\d+)\\D*", "$1/1073741824.0"]},
-			{"name":"math", "args":["answer"]}
-		]}
-		,{"name":"byteToMeg","description":"bytes to MegaBytes","commands":[
-			{"name":"rep", "args":["\\D*(\\d+)\\D*", "$1/1048576.0"]},
-			{"name":"math", "args":["answer"]}
-		]}
-		,{"name":"megToByte","description":"MegaBytes to bytes","commands":[
-			{"name":"rep", "args":["\\D*(\\d+)\\D*", "$1 * 1048576"]},
-			{"name":"math", "args":["answer"]}
-		]}
-		,{"name":"byteToKilo","description":"bytes to KiloBytes","commands":[
-			{"name":"rep", "args":["\\D*(\\d+)\\D*", "$1/1024.0"]},
-			{"name":"math", "args":["answer"]}
-		]}
-		,{"name":"addColumn","description":"Add a column to a table T-SQL","commands":[
-			{"name":"settext","args":["use {{Database}}\ngo\n\nif exists (select * from syscolumns where id=object_id('{{Table Name}}_base') and name='{{Column Name}}')\nbegin\nalter table {{Table Name}}_base drop column {{Column Name}}\nend\n\nif exists (select * from syscolumns where id=object_id('{{Table Name}}_base_audit') and name='{{Column Name}}')\nbegin\nalter table {{Table Name}}_base_audit drop column {{Column Name}}\nend\n\ngo\n\nalter table {{Table Name}}_base add {{Column Name}} {{Variable Type}} null\nalter table {{Table Name}}_base_audit add {{Column Name}} {{Variable Type}} null"]}
-		],"parameters":[
-			{"name":"Database","defaultValue":null},
-			{"name":"Table Name","defaultValue":null},
-			{"name":"Column Name","defaultValue":null},
-			{"name":"Variable Type","defaultValue":null}
-		]}
-		,{"name":"plugin","description":"Generate a pasty plugin","commands":[
-			{"name":"settext","args":["{\"name\":\"xxx\",\"description\":\"xxx\",\"commands\":[\n{\"name\":\"command\",\"args\":[\"string\",\"args\"]}\n],\"parameters\":[\n{\"name\":\"parm1name\",\"defaultValue\":null}]}"]}
-		]}
-		,{"name":"limit","description":"T-SQL with limits","commands":[
-			{"name":"rep","args":["((.|\n)+)","begin transaction\n\n$1\n\nif @@rowcount > {{limit}}\nbegin\n\trollback transaction\nend else begin\n\tcommit transaction\nend\n"]}
-		],"parameters":[
-			{"name":"limit","defaultValue":null}
-		]}
-		,{"name":"convertToCdata","description":"Converts encoded XML to a CDATA section",
-			"commands":[
-				{"name":"xmldecode","args":[""]},
-				{"name":"rep","args":["((.|\n)+)","<![CDATA[$0]]>"]}
+	"tabString": "\t",
+	"pluginsDirectory": "c:\\users\\mrikard\\pastyPlugins",
+	"localStyleSheet": "c:\\users\\mrikard\\gpasty.css",
+	"savedCommands": [
+		{
+			"name": "hamburger",
+			"description": "hungry?",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"🍔"
+					]
+				}
 			]
-		}
-		,{"name":"marryTables","description":"creates a foreign key constraint","commands":[
-				{"name":"settext","args":["IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_{{Foreign Key Table}}_{{Primary Key Table}}')\n\tALTER TABLE [dbo].[{{Primary Key Table}}] DROP CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}]\nGO\n\nALTER TABLE [dbo].[{{Foreign Key Table}}] WITH CHECK ADD CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}] FOREIGN KEY([{{Foreign Key Column}}])\n\tREFERENCES [dbo].[{{Primary Key Table}}] ([{{Primary Key Column}}])\nGO\n\nALTER TABLE [dbo].[{{Foreign Key Table}}] CHECK CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}]\nGO"]}
-			],"parameters":[
-				{"name":"Foreign Key Table","defaultValue":null},
-				{"name":"Primary Key Table","defaultValue":null},
-				{"name":"Foreign Key Column","defaultValue":null},
-				{"name":"Primary Key Column","defaultValue":null}
+		},
+		{
+			"name": "numlist",
+			"description": "List of numbers with parenthesis around it",
+			"commands": [
+				{
+					"name": "grep",
+					"args": [
+						"\\-?\\d+(\\.\\d+)?",
+						",",
+						"-L"
+					],
+					"description": "greps all matches and separates with comma"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(.|\n)+",
+						"($&)"
+					],
+					"description": "put parenthesis around everything"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(.{80,90},)",
+						"$1\n"
+					],
+					"description": "keep the line length sensible"
+				}
+			]
+		},
+		{
+			"name": "smash",
+			"description": "smashes empty lines",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\n\\s*",
+						"\n"
+					]
+				}
+			]
+		},
+		{
+			"name": "makeXpath",
+			"description": "make an xpath",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"<\\!\\-\\-.*\\-\\->",
+						""
+					],
+					"description": "delete comments"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"<[^>]+/>",
+						""
+					],
+					"description": "delete self-closing tags"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"<([^> ]+)[^>]*>(.|\n)+</\\1>",
+						""
+					],
+					"description": "remove nodes not in path"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"<([^> ]+)[^>]*>",
+						"<$1>"
+					],
+					"description": "remove attributes"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"<!\\-\\-.*\\-\\->",
+						""
+					],
+					"description": "delete comments"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"^[ \t]+",
+						"",
+						"-mig"
+					],
+					"description": "trim lines"
+				},
+				{
+					"name": "smash",
+					"args": [],
+					"description": "get rid of multiple lines"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\n",
+						"/"
+					],
+					"description": "replace new lines with /"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(\\s|\\>|\\<)",
+						""
+					],
+					"description": "get rid of non-pathy characters"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"^.",
+						"//$0"
+					],
+					"description": "put a // at the front"
+				}
+			]
+		},
+		{
+			"name": "hulkSmash",
+			"description": "smash it down to one line",
+			"commands": [
+				{
+					"name": "smash",
+					"args": []
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\s*\n\\s*",
+						""
+					]
+				}
+			]
+		},
+		{
+			"name": "enTab",
+			"description": "converts spaces to tabs",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"    ",
+						"\t"
+					]
+				}
+			]
+		},
+		{
+			"name": "deTab",
+			"description": "converts tabs to spaces",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\t",
+						"    "
+					]
+				}
+			]
+		},
+		{
+			"name": "sqlSafe",
+			"description": "replaces apostrophes with two apostrophes",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"'",
+						"''"
+					]
+				}
+			]
+		},
+		{
+			"name": "sqlRethrow",
+			"description": "Catch/rollback/throw",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"BEGIN CATCH\n\tROLLBACK TRANSACTION\n\tDECLARE @ErrorMessage NVARCHAR(4000);\n\tDECLARE @ErrorSeverity INT;\n\tDECLARE @ErrorState INT;\n\n\tSELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();\n\tRAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);\nEND CATCH\n"
+					]
+				}
+			]
+		},
+		{
+			"name": "sqlUnsafe",
+			"description": "replaces two apostrophes with one apostrophe",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"''",
+						"'"
+					]
+				}
+			]
+		},
+		{
+			"name": "list",
+			"description": "replaces new lines with commas",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\n+",
+						","
+					]
+				}
+			]
+		},
+		{
+			"name": "strList",
+			"description": "Same as \"list\" but adds apostrophes around the list items",
+			"commands": [
+				{
+					"name": "smash",
+					"args": []
+				},
+				{
+					"name": "rep",
+					"args": [
+						"'",
+						"''"
+					],
+					"description": "convert singe apos to escaped"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\n",
+						"','"
+					],
+					"description": "each line is a string"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"[\\d\\D]+",
+						"('$&')"
+					],
+					"description": "put parens around everything"
+				},
+				{
+					"name": "rep",
+					"args": [
+						".{80,140},",
+						"$&\n"
+					],
+					"description": "keep the line length sensible"
+				}
+			]
+		},
+		{
+			"name": "trimEnds",
+			"description": "Removes whitespace at the end of the line",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"[ \t]+$",
+						"",
+						"-mig"
+					]
+				}
+			]
+		},
+		{
+			"name": "trimLines",
+			"description": "Removes whitespace at both ends of the line",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"^[ \t]*(.+?)[ \t]*$",
+						"$1",
+						"-mig"
+					]
+				}
+			]
+		},
+		{
+			"name": "doubleQuote",
+			"description": "quotation mark to double quotation mark",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\"",
+						"\"\""
+					]
+				}
+			]
+		},
+		{
+			"name": "GuidList",
+			"description": "Gets a list of Guid's separated by commas, enclosed in apostrophes",
+			"commands": [
+				{
+					"name": "grep",
+					"args": [
+						"[\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12}",
+						"','",
+						"-L"
+					]
+				},
+				{
+					"name": "dedup",
+					"args": [
+						"','"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"^((.|\n)+)$",
+						"('$1')"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"[\\da-f\\-',]{194},",
+						"$&\n"
+					]
+				}
+			]
+		},
+		{
+			"name": "mdTableold",
+			"description": "tables into markdown tables",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"([ ]{2,}|\t+)",
+						"\t|\t"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"^.+$",
+						"| $&\t|",
+						"-m"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"^.+",
+						"$&\n|------|"
+					]
+				},
+				{
+					"name": "columnAlign",
+					"args": [
+						"1"
+					]
+				}
+			]
+		},
+		{
+			"name": "sprocMe",
+			"description": "turn query into stored procedure",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"((.|\n)+)",
+						"USE [{{Database}}]\nGO\n\nIF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{{Stored Procedure Name}}]') AND type in (N'P', N'PC'))\nDROP PROCEDURE [dbo].[{{Stored Procedure Name}}]\nGO\n\nUSE [{{Database}}]\nGO\n\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE PROCEDURE [dbo].[{{Stored Procedure Name}}]\n@VARS\nAS\nBEGIN\n\n$1\n\nEND\nGO\n\nGRANT EXECUTE ON [dbo].[{{Stored Procedure Name}}] TO [DBRole_GISWEBUsers] AS [dbo]\nGO\n"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "Database",
+					"defaultValue": null
+				},
+				{
+					"name": "Stored Procedure Name",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "messageLog",
+			"description": "formats a log I normally see",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"(\\w+\\[)([^\\]]{20,})",
+						"$1\n$2"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"([^\\[]{20,})(\\])",
+						"$1\n$2"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(\\])\\s*",
+						"$1\n"
+					]
+				},
+				{
+					"name": "xml",
+					"args": []
+				}
+			]
+		},
+		{
+			"name": "unRegion",
+			"description": "I hate regions in code",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"#region(.*)",
+						"//$1"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"#endregion.*\n",
+						""
+					]
+				}
+			]
+		},
+		{
+			"name": "crVer",
+			"description": "CR Verification",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"## Verification Plan Details:\n * What should be tested and who will do the testing\n\n## Monitoring Plan Details;\n  * Details on monitoring the change for any negative effects\n\n## Risk and Impact of the code move:\n  * Systems Impacted\n  * Customers Impacted\n  * Operations Impact\n  * Security Risk or Impact\n  * Other\n"
+					]
+				}
+			]
+		},
+		{
+			"name": "xslt",
+			"description": "boilerplate xslt 1.0",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n\t<xsl:output indent=\"yes\" method=\"xml\" version=\"1.0\" encoding=\"UTF-8\"/>\n\t<xsl:template match=\"@* | node()\">\n\t\t<xsl:copy>\n\t\t\t<xsl:apply-templates select=\"@* | node()\"/>\n\t\t</xsl:copy>\n\t</xsl:template>\n</xsl:stylesheet>\n"
+					]
+				}
+			]
+		},
+		{
+			"name": "connString",
+			"description": "Generates a SQL Server connection string",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"Data Source={{Server}};Initial Catalog={{Database}};Integrated Security=True;Application Name={{Application Name}};"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "Server",
+					"defaultValue": null
+				},
+				{
+					"name": "Database",
+					"defaultValue": null
+				},
+				{
+					"name": "Application Name",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "deadcode",
+			"description": "The dead code GUID",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"00000000-DEAD-C0DE-0000-000000000000"
+					]
+				}
+			]
+		},
+		{
+			"name": "cursor",
+			"description": "tsql cursor",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"(.|\n)*select ((.|\n)+)\\sfrom(.|\n)+",
+						"/*vars*/Declare $2;\n\nDeclare {{Cursor Name}} CURSOR FAST_FORWARD FOR \n\t$&\n\nOPEN {{Cursor Name}}\nFETCH NEXT FROM {{Cursor Name}} \nINTO $2 \n\nWHILE @@FETCH_STATUS = 0 \nBEGIN \n\t--row specific functions\n\tFETCH NEXT FROM {{Cursor Name}} \n\tINTO $2 \nEND \nCLOSE {{Cursor Name}} \nDEALLOCATE {{Cursor Name}}"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(\\/\\*vars\\*\\/Declare.+)(\\b\\w+\\b)",
+						"$1@$2"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(INTO.+)(\\b\\w+\\b)",
+						"$1@$2"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "Cursor Name",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "mdLink",
+			"description": "Markdown links",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						".+",
+						"[{{link text}}]($& \"{{alt text}}\")"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						" \"\"",
+						""
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\[\\]\\((.+)\\)",
+						"[$1]"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "link text",
+					"defaultValue": null
+				},
+				{
+					"name": "alt text",
+					"defaultValue": ""
+				}
+			]
+		},
+		{
+			"name": "sqlCase",
+			"description": "Upper case key-words in SQL",
+			"commands": [
+				{
+					"name": "entab",
+					"args": []
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\b(abs|after|all|alter|and|as|avg|begin|between|by|nonclustered|clustered|cascade|case|cast|catch|ceiling|charindex|close|coalesce|column|commit|constraint|contains|continue|convert|count|create|cube|cursor|dateadd|datediff|datename|datepart|day|deallocate|declare|default|delete|desc|distinct|drop|else|end|escape|except|exec|execute|exists|exit|fetch|first|floor|for|from|function|get|getdate|go|goto|grant|group|grouping|having|host_id|host_name|hour|identity|if|in|index|inner|insert|into|is|isdate|isnull|join|key|left|len|length|like|lower|ltrim|max|min|minute|mod|modify|month|newid|next|nolock|not|null|off|on|or|order|out|outer|output|partition|power|raw|references|replace|return|returns|right|rollback|rollup|round|row|row_number|rows|rtrim|second|select|set|soundex|sqrt|substring|sum|sysdatetime|table|then|to|transaction|trigger|truncate|try|union|update|upper|use|values|view|when|where|with|while|year)\\b",
+						"\\u$1"
+					]
+				}
+			]
+		},
+		{
+			"name": "cleanInsert",
+			"commands": [
+				{
+					"name": "insert",
+					"args": [
+						"{{table name}}"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"'\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\.\\d{3,6}'",
+						"GETDATE()"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"'geninfo\\.+?'",
+						"SUSER_NAME()"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "table name",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "insertWithXml",
+			"description": "Insert with XML columns (which are multiline)",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						">\\s+<",
+						"><"
+					]
+				},
+				{
+					"name": "insert",
+					"args": [
+						"{{table name}}"
+					]
+				},
+				{
+					"name": "xml",
+					"args": []
+				}
+			],
+			"parameters": [
+				{
+					"name": "table name",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "tableVar",
+			"description": "creates a table variable from Alt+F1 data",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"(.+?)\t(.+?)\t(.+?)\t(.+?).+",
+						"$1 $2($4)"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\n",
+						","
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(?!=(varchar|decimal))\\(\\d+\\)",
+						""
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						".+",
+						"declare @{{variable name}} table ($&)"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "variable name",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "emoji",
+			"description": "converts common representations to emoji",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						":\\)",
+						"☺️"
+					],
+					"description": ":)"
+				},
+				{
+					"name": "rep",
+					"args": [
+						":'\\)",
+						"😂"
+					],
+					"description": ":')"
+				},
+				{
+					"name": "rep",
+					"args": [
+						"':\\)",
+						"😅"
+					],
+					"description": "':)"
+				},
+				{
+					"name": "rep",
+					"args": [
+						";\\)",
+						"😉"
+					],
+					"description": ";)"
+				},
+				{
+					"name": "rep",
+					"args": [
+						":\\(",
+						"☹"
+					],
+					"description": ":("
+				},
+				{
+					"name": "rep",
+					"args": [
+						"X\\|",
+						"😣"
+					],
+					"description": "X|"
+				}
+			]
+		},
+		{
+			"name": "sqlcs",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"using (var conn = new SqlConnection(ConnectionString))\n{\n\tconn.Open();\n\tusing (var cmd = conn.CreateCommand())\n\t{\n\t\tcmd.CommandText = \"\";\n\t\tcmd.CommandType = CommandType.StoredProcedure;\n\t\tcmd.Parameters.AddWithValue(\"@parm\", parmValue);\n\t\tusing (SqlDataReader dr = cmd.ExecuteReader())\n\t\t{\n\t\t\twhile (dr.Read())\n\t\t\t{\n\t\t\t\t//do something\n\t\t\t}\n\t\t}\n\t}\n}"
+					]
+				}
+			]
+		},
+		{
+			"name": "ago",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"dateadd(n,-{{number of minutes}},getdate())"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "number of minutes",
+					"defaultValue": "5"
+				}
+			]
+		},
+		{
+			"name": "sqlStringParse",
+			"description": "Provides a way to parse an SQL string looking for certain words",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"case when {{Data Column}} like '%{{Left Boundary}}%' then substring({{Data Column}}, patindex('%{{Left Boundary}}%', {{Data Column}})+len('{{Left Boundary}}'), CharIndex('{{Right Boundary}}',{{Data Column}},patindex('%{{Left Boundary}}%', {{Data Column}})+len('{{Left Boundary}}'))-(patindex('%{{Left Boundary}}%', {{Data Column}})+len('{{Left Boundary}}'))) else '' end"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "Data Column",
+					"defaultValue": null
+				},
+				{
+					"name": "Left Boundary",
+					"defaultValue": null
+				},
+				{
+					"name": "Right Boundary",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "sqlCsProps",
+			"description": "Copy Alt+F1 of table (or sys.columns) and get cs properties",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"^(\\w+)\\t(\\w+)\\t.*",
+						"public $2 $1 { get; set; }",
+						"-m"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bdatetime\\b",
+						"DateTime"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bvarchar\\b",
+						"string"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bimage\\b",
+						"byte[]"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\btext\\b",
+						"string"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\buniqueidentifier\\b",
+						"Guid"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bdate\\b",
+						"DateTime"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\btime\\b",
+						"DateTime"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bdatetime2\\b",
+						"DateTime"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bdatetimeoffset\\b",
+						"TimeSpan"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\btinyint\\b",
+						"byte"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bsmallint\\b",
+						"byte"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bsmalldatetime\\b",
+						"DateTime"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\breal\\b",
+						"double"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bmoney\\b",
+						"decimal"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bdatetime\\b",
+						"DateTime"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bntext\\b",
+						"string"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bbit\\b",
+						"bool"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bnumeric\\b",
+						"int"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bsmallmoney\\b",
+						"decimal"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bbigint\\b",
+						"long"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bvarbinary\\b",
+						"byte[]"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bbinary\\b",
+						"byte[]"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bchar\\b",
+						"string"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\btimestamp\\b",
+						"TimeStamp"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bnvarchar\\b",
+						"string"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bnchar\\b",
+						"string"
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"\\bxml\\b",
+						"XDocument"
+					]
+				}
+			]
+		},
+		{
+			"name": "strict",
+			"description": "HTML strict",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n  <head>\n    <title>xxxx</title>\n  </head>\n  <body>\n\n  </body>\n</html>\n"
+					]
+				}
+			]
+		},
+		{
+			"name": "remove",
+			"description": "Replace with nothing",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"{{pattern}}",
+						""
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "pattern",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "xmlWatchConfigurator",
+			"description": "assembly info for Enterprise Logging",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"[assembly: Gis.Enterprise.Logging.Client.log4net.Config.XmlConfigurator(Watch = true)]"
+					]
+				}
+			]
+		},
+		{
+			"name": "byteToGig",
+			"description": "bytes to GigaBytes",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\\D*(\\d+)\\D*",
+						"$1/1073741824.0"
+					]
+				},
+				{
+					"name": "math",
+					"args": [
+						"answer"
+					]
+				}
+			]
+		},
+		{
+			"name": "byteToMeg",
+			"description": "bytes to MegaBytes",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\\D*(\\d+)\\D*",
+						"$1/1048576.0"
+					]
+				},
+				{
+					"name": "math",
+					"args": [
+						"answer"
+					]
+				}
+			]
+		},
+		{
+			"name": "megToByte",
+			"description": "MegaBytes to bytes",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\\D*(\\d+)\\D*",
+						"$1 * 1048576"
+					]
+				},
+				{
+					"name": "math",
+					"args": [
+						"answer"
+					]
+				}
+			]
+		},
+		{
+			"name": "byteToKilo",
+			"description": "bytes to KiloBytes",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"\\D*(\\d+)\\D*",
+						"$1/1024.0"
+					]
+				},
+				{
+					"name": "math",
+					"args": [
+						"answer"
+					]
+				}
+			]
+		},
+		{
+			"name": "addColumn",
+			"description": "Add a column to a table T-SQL",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"use {{Database}}\ngo\n\nif exists (select * from syscolumns where id=object_id('{{Table Name}}_base') and name='{{Column Name}}')\nbegin\nalter table {{Table Name}}_base drop column {{Column Name}}\nend\n\nif exists (select * from syscolumns where id=object_id('{{Table Name}}_base_audit') and name='{{Column Name}}')\nbegin\nalter table {{Table Name}}_base_audit drop column {{Column Name}}\nend\n\ngo\n\nalter table {{Table Name}}_base add {{Column Name}} {{Variable Type}} null\nalter table {{Table Name}}_base_audit add {{Column Name}} {{Variable Type}} null"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "Database",
+					"defaultValue": null
+				},
+				{
+					"name": "Table Name",
+					"defaultValue": null
+				},
+				{
+					"name": "Column Name",
+					"defaultValue": null
+				},
+				{
+					"name": "Variable Type",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "plugin",
+			"description": "Generate a pasty plugin",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"{\"name\":\"xxx\",\"description\":\"xxx\",\"commands\":[\n{\"name\":\"command\",\"args\":[\"string\",\"args\"]}\n],\"parameters\":[\n{\"name\":\"parm1name\",\"defaultValue\":null}]}"
+					]
+				}
+			]
+		},
+		{
+			"name": "limit",
+			"description": "T-SQL with limits",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"((.|\n)+)",
+						"begin transaction\n\n$1\n\nif @@rowcount > {{limit}}\nbegin\n\trollback transaction\nend else begin\n\tcommit transaction\nend\n"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "limit",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "convertToCdata",
+			"description": "Converts encoded XML to a CDATA section",
+			"commands": [
+				{
+					"name": "xmldecode",
+					"args": [
+						""
+					]
+				},
+				{
+					"name": "rep",
+					"args": [
+						"((.|\n)+)",
+						"<![CDATA[$0]]>"
+					]
+				}
+			]
+		},
+		{
+			"name": "marryTables",
+			"description": "creates a foreign key constraint",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_{{Foreign Key Table}}_{{Primary Key Table}}')\n\tALTER TABLE [dbo].[{{Primary Key Table}}] DROP CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}]\nGO\n\nALTER TABLE [dbo].[{{Foreign Key Table}}] WITH CHECK ADD CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}] FOREIGN KEY([{{Foreign Key Column}}])\n\tREFERENCES [dbo].[{{Primary Key Table}}] ([{{Primary Key Column}}])\nGO\n\nALTER TABLE [dbo].[{{Foreign Key Table}}] CHECK CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}]\nGO"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "Foreign Key Table",
+					"defaultValue": null
+				},
+				{
+					"name": "Primary Key Table",
+					"defaultValue": null
+				},
+				{
+					"name": "Foreign Key Column",
+					"defaultValue": null
+				},
+				{
+					"name": "Primary Key Column",
+					"defaultValue": null
+				}
 			]
 		}
 	]

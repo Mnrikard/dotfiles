@@ -137,6 +137,7 @@ function Execute-OrVim($file, $server){
 		$doedit = (Read-Host "Edit in Vim? [Y|n]");
 		if(!($doedit -match "n")){
 			& vim $file;
+			Execute-OrVim $file $server
 		}
 	} else {
 		Write-Host $output -ForegroundColor green
