@@ -59,15 +59,17 @@ set encoding=utf-8
 
 "PluginSettings{{{
 	"OmniSharp {{{
-	if(has("python") || has("python3"))
-		let g:OmniSharp_server_type = 'roslyn'
-		let g:OmniSharp_prefer_global_sln = 1
-		let g:OmniSharp_host = "http://localhost:2000"
+	let g:OmniSharp_server_stdio = 1
+
+"	if(has("python") || has("python3"))
+"		let g:OmniSharp_server_type = 'roslyn'
+"		let g:OmniSharp_prefer_global_sln = 1
+"		let g:OmniSharp_host = "http://localhost:2000"
 
 		if has("win32")
-			let g:OmniSharp_server_path = 'C:\OmniSharp\omnisharp.http-win-x64\OmniSharp.exe'
+			let g:OmniSharp_server_path = 'C:\OmniSharp\OmniSharp.exe'
 		else
-			let g:OmniSharp_server_path = '/mnt/c/OmniSharp/omnisharp.http-win-x64/OmniSharp.exe'
+			let g:OmniSharp_server_path = '/mnt/c/OmniSharp/OmniSharp.exe'
 			let g:OmniSharp_translate_cygwin_wsl = 1
 		endif
 
@@ -113,7 +115,7 @@ set encoding=utf-8
 			"finds members in the current buffer
 			autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr>
 			" cursor can be anywhere on the line containing an issue
-			autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
+			autocmd FileType cs nnoremap <leader>x  :OmniSharpGetCodeActions<cr>
 			autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
 			autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
 			autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
@@ -127,7 +129,7 @@ set encoding=utf-8
 
 		" Add syntax highlighting for types and interfaces
 		nnoremap <leader>th :OmniSharpHighlightTypes<cr>
-	endif 
+"	endif 
 	"}}}
 	"Airline {{{
 	"let g:airline#extensions#tabline#enabled = 1
@@ -203,6 +205,7 @@ set renderoptions=type:directx
 	"set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI:qDRAFT
 	
 	set whichwrap+=<,>,[,]
+	set nowrapscan
 	set hidden
 	set confirm
 	set wildmode=longest,list,full

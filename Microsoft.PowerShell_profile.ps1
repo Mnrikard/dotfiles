@@ -6,6 +6,7 @@ Import-Module PSReadline
 #PSReadLine\Set-PSReadlineOption -EditMode Vi
 
 Set-Alias -Name ~ -Value $env:UserProfile
+Set-Alias -Name pandoc -Value "C:\Program Files\Pandoc\pandoc.exe"
 
 Set-PSReadlineOption -ShowToolTips -BellStyle Visual
 
@@ -186,6 +187,7 @@ function gfetch {
 function mklink ($link, $target){
 	cmd /c mklink $link $target
 }
+
 
 $env:home = "c:\Users\mrikard\"
 Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)

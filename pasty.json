@@ -1250,6 +1250,19 @@
 					"defaultValue": null
 				}
 			]
+		},
+		{
+			"name":"noop",
+			"description":"removes any special formatting",
+			"commands":[
+				{
+
+					"name":"rep",
+					"args": [
+						"525dbd75-e8ed-4167-a1c4-6a8c64b39504", "525dbd75-e8ed-4167-a1c4-6a8c64b39504"
+					]
+				}
+			]
 		}
 	]
 }

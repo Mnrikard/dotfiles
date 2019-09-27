@@ -6,6 +6,8 @@ alias gstat="git status"
 alias gsql="git rm ChangeScripts/Rollback/*/*.sql;git rm ChangeScripts/Upgrade/*/*.sql"
 alias githere="git --no-pager"
 
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
 
 function gpush {
 	branch=`git rev-parse --abbrev-ref HEAD`
