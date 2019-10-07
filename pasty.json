@@ -1203,7 +1203,7 @@
 			]
 		},
 		{
-			"name": "convertToCdata",
+			"name": "toCdata",
 			"description": "Converts encoded XML to a CDATA section",
 			"commands": [
 				{
