@@ -439,6 +439,13 @@
 				{
 					"name": "xml",
 					"args": []
+				},
+				{
+					"name": "rep",
+					"args": [
+						"(.{100,120}) ",
+						"$1\n"
+					]
 				}
 			]
 		},
@@ -1262,6 +1269,16 @@
 						"525dbd75-e8ed-4167-a1c4-6a8c64b39504", "525dbd75-e8ed-4167-a1c4-6a8c64b39504"
 					]
 				}
+			]
+		},
+		{
+			"name":"html",
+			"description":"boilerplate HTML",
+			"commands":[
+				{"name":"settext","args":["<html>\n\t<head>\n\t\t<title>{{title}}</title>\n\t</head>\n\t<body>\n\n\n\t</body>\n</html>"]}
+			],
+			"parameters":[
+				{"name":"title", "defaultValue":"P L A C E  T I T L E  T E X T  H E R E"}
 			]
 		}
 	]

@@ -22,8 +22,10 @@ set encoding=utf-8
 	Plugin 'PProvost/vim-ps1'
 	Plugin 'altercation/vim-colors-solarized'
 	"Plugin 'codelibra/log4jhighlighter'
+	Plugin 'chrisbra/csv.vim'
 	Plugin 'ctrlpvim/ctrlp.vim'
 	Plugin 'ervandew/supertab'
+	Plugin 'fatih/vim-go'
 	Plugin 'gabrielelana/vim-markdown'
 	Plugin 'garbas/vim-snipmate'
 	Plugin 'leafgarland/typescript-vim'
@@ -256,7 +258,7 @@ set renderoptions=type:directx
 	highlight default spacesbad term=undercurl ctermbg=13 gui=undercurl guisp=#2aa198
 	highlight default CodeSmells ctermbg=red guibg=red
 	match CodeSmells /\v\s$/
-	2match spacesbad /  /
+	"2match spacesbad /  /
 	
 "}}}
 
