@@ -5,9 +5,22 @@ alias gfetch="git fetch -p"
 alias gstat="git status"
 alias gsql="git rm ChangeScripts/Rollback/*/*.sql;git rm ChangeScripts/Upgrade/*/*.sql"
 alias githere="git --no-pager"
+alias FZF="fzf --preview 'bat --style=numbers --color=always {} | head -500'"
+alias e="vim"
 
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
+
+function fzfp {
+    fzf --preview 'bat {} --color always'
+}
+
+function swapd {
+    dirs -l -v
+    echo Pick a directory
+    read whichdir
+    pushd -$whichdir
+}
 
 function gpush {
 	branch=`git rev-parse --abbrev-ref HEAD`
@@ -27,8 +40,61 @@ chr() {
 	printf "\\$(printf '%03o' "$1")"
 }
 
-ord() {
-	LC_CTYPE=C printf '%d' "'$1"
+function ord() {
+    LC_CTYPE=C printf '%d' "'$1"
+}
+
+function prependPath() {
+	addin=$1
+	if [[ "$PATH" =~ ":$addin:" ]];then
+	elif [[ "$PATH" =~ ":$addin\$" ]];then
+	else
+		export PATH=$addin:$PATH
+	fi
+}
+
+function appendPath() {
+	addin=$1
+	if [[ "$PATH" =~ ":$addin:" ]];then
+	elif [[ "$PATH" =~ ":$addin\$" ]];then
+	else
+		export PATH=$PATH:$addin
+	fi
+}
+
+function tsplit() {
+    case "$1" in
+        "left")
+            tmux split-window -b -h;
+            ;;
+        "right")
+            tmux split-window -h;
+            ;;
+        "above")
+            tmux split-window -b;
+            ;;
+        "below")
+            tmux split-window;
+            ;;
+        *)
+    esac
+}
+
+function vzf() {
+    vim $(fzf)
+}
+
+function cfg {
+	if [[ "$1" == "set" ]];then
+		source ~/.zshrc
+        echo "~/.zshrc has been reloaded"
+	else
+		vim ~/.zshrc
+	fi
+}
+
+function getChar {
+    printf "\x$(printf '%x' $1)"
 }
 
 vstsTeam="gis-stratus"
@@ -102,6 +168,9 @@ VIRTUAL_ENV_DISABLE_PROMPT=false
 plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
+source ~/zshenvironment
+
+export LS_COLORS="ow=01;36;40"
 
 # bindkey -v
 alias ...="cd ../.."

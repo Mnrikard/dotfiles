@@ -1235,11 +1235,19 @@
 				{
 					"name": "settext",
 					"args": [
-						"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_{{Foreign Key Table}}_{{Primary Key Table}}')\n\tALTER TABLE [dbo].[{{Primary Key Table}}] DROP CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}]\nGO\n\nALTER TABLE [dbo].[{{Foreign Key Table}}] WITH CHECK ADD CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}] FOREIGN KEY([{{Foreign Key Column}}])\n\tREFERENCES [dbo].[{{Primary Key Table}}] ([{{Primary Key Column}}])\nGO\n\nALTER TABLE [dbo].[{{Foreign Key Table}}] CHECK CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}]\nGO"
+						"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_{{Foreign Key Table}}_{{Primary Key Table}}_{{Primary Key Column}}')\n\tALTER TABLE [{{Foreign Key Schema}}].[{{Foreign Key Table}}] DROP CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}_{{Primary Key Column}}]\nGO\n\nALTER TABLE [{{Foreign Key Schema}}].[{{Foreign Key Table}}] WITH CHECK ADD CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}_{{Primary Key Column}}] FOREIGN KEY([{{Foreign Key Column}}])\n\tREFERENCES [{{Primary Key Schema}}].[{{Primary Key Table}}] ([{{Primary Key Column}}])\nGO\n\nALTER TABLE [{{Foreign Key Schema}}].[{{Foreign Key Table}}] CHECK CONSTRAINT [FK_{{Foreign Key Table}}_{{Primary Key Table}}_{{Primary Key Column}}]\nGO"
 					]
 				}
 			],
 			"parameters": [
+                {
+                    "name": "Foreign Key Schema",
+                    "defaultValue": null
+                },
+                {
+                    "name": "Primary Key Schema",
+                    "defaultValue": null
+                },
 				{
 					"name": "Foreign Key Table",
 					"defaultValue": null

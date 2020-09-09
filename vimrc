@@ -28,6 +28,8 @@ set encoding=utf-8
 	Plugin 'fatih/vim-go'
 	Plugin 'gabrielelana/vim-markdown'
 	Plugin 'garbas/vim-snipmate'
+	Plugin 'junegunn/fzf'
+	Plugin 'junegunn/fzf.vim'
 	Plugin 'leafgarland/typescript-vim'
 	Plugin 'scrooloose/nerdtree'
 	Plugin 'scrooloose/syntastic'
@@ -39,6 +41,8 @@ set encoding=utf-8
 	Plugin 'tpope/vim-repeat'
 	Plugin 'tpope/vim-surround'
 	Plugin 'tpope/vim-vividchalk'
+    Plugin 'tyru/open-browser.vim'
+    Plugin 'tyru/open-browser-github.vim'
 	Plugin 'vim-airline/vim-airline'
 	Plugin 'vim-airline/vim-airline-themes'
 	"Plugin 'vim-bgimg'
@@ -49,7 +53,6 @@ set encoding=utf-8
 	" tabular: used to line things up
 	"Plugin 'godlygeek/tabular'
 	" fzf: fuzzy finder
-	"Plugin 'junegunn/fzf'
 	"Plugin 'kien/ctrlp.vim'
 	" match xml tags
 	"Plugin 'valloric/matchtagalways'
@@ -71,8 +74,8 @@ set encoding=utf-8
 		if has("win32")
 			let g:OmniSharp_server_path = 'C:\OmniSharp\OmniSharp.exe'
 		else
-			let g:OmniSharp_server_path = '/mnt/c/OmniSharp/OmniSharp.exe'
-			let g:OmniSharp_translate_cygwin_wsl = 1
+			"let g:OmniSharp_server_path = '/mnt/c/OmniSharp/OmniSharp.exe'
+			"let g:OmniSharp_translate_cygwin_wsl = 1
 		endif
 
 		"Set the type lookup function to use the preview window instead of the status line
@@ -137,7 +140,7 @@ set encoding=utf-8
 	"let g:airline#extensions#tabline#enabled = 1
 	let g:airline_left_sep=nr2char(0xe0b0)
 	let g:airline_right_sep=nr2char(0xe0b2)
-	let g:airline_theme='vice'
+	let g:airline_theme='dark'
 	"}}}
 	"MatchTagAlways{{{
 	let g:mta_filetypes = { 'html' : 1, 'xhtml' : 1, 'xml' : 1, 'jinja' : 1, 'xslt':1,'cshtml':1 }
@@ -179,6 +182,10 @@ set encoding=utf-8
 	let g:solarized_italic=0
 	"}}}
 	
+    "vim-go{{{
+        let g:go_fmt_command = "goimports"
+        let g:go_build_tags = "unit"
+    "}}}
 "}}}
 
 "Sets{{{
@@ -245,6 +252,7 @@ set renderoptions=type:directx
 	set visualbell
 	set noexpandtab
 	set background=dark
+	set fileignorecase
 
 	if has('gui_running')
 		set guifont=Fira_Code:h10:cANSI:qDRAFT
@@ -312,7 +320,7 @@ set renderoptions=type:directx
 	" grep for word under cursor
 	nnoremap <leader>K :vimgrep /<cword>/g **/*<cr>:copen<cr>
 	" Ctrl+v works in normal mode too
-	nnoremap <C-v> "+p
+	"nnoremap <C-v> "+p
 	"f6 moves windows
 	nnoremap <f6> :wincmd W<cr>
 	"paste over word
@@ -371,6 +379,9 @@ set renderoptions=type:directx
 		autocmd FileType markdown setlocal colorcolumn=120,121,122,123,124,125,126,127,128,129,130
 		autocmd FileType markdown setlocal spell
 		autocmd FileType markdown setlocal foldcolumn=5
+
+        autocmd FileType yaml setlocal shiftwidth=2
+        autocmd FileType yaml setlocal tabstop=2
 
 		autocmd FileType cs inoremap <buffer> ){ )<cr>{<cr>}<Esc>kA
 		autocmd FileType cs setlocal errorformat=%f(%l\\\,%c):\ %m\[
@@ -577,6 +588,14 @@ syntax sync minlines=1000
 		execute ":OmniSharpStartServer"
 	endfunction
 	command! OmniSharpRefreshServer call RefreshOmni()
+
+	function! GetWindowsClipboardContents()
+		let winclip = system("/usr/local/lib/node_modules/pasty-clipboard-editor/node_modules/clipboardy/fallbacks/windows/clipboard_x86_64.exe --paste")
+		let @" = winclip
+	endfunction
+	command! -nargs=0 GetClip execute "call GetWindowsClipboardContents()"
+
+
 "}}
 
 "variables {{

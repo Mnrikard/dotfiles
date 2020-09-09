@@ -7,11 +7,9 @@ SetTitleMatchMode, 2
 ::uuu::UniqueIdentifier
 ::recieve::receive
 ::teh ::the 
-::EqeustPlus::EquestPlus
 ::txiso::set transaction isolation level read uncommitted
 ::lable::label
-::eqpcode::c:\repos\eqPlusClientServices\EquestPlusWS\EquestPlusWSInternal\EquestPlusWS.asmx.vb
-::db3suplink::[proddb3sup\proddb3sup]
+::vim fzf::vim $(fzf)
 
 
 ;#IfWinActive ahk_exe firefox.exe
@@ -130,17 +128,17 @@ return
 	;^n::
 	;	Run, open "c:\SQL\TopTen\new.sql"
 	;	return
-	^n::
-		RunWait, powershell.exe -NoLogo -NoProfile -File c:\repos\dotfiles\newsql.ps1
-		;Send {Down}{Down}
-		;Send {ShiftDown}{End}{ShiftUp}
-		return
-	^+n::
-		Run powershell.exe -NoLogo -NoProfile -File c:\repos\recovery\scripts\newsql.ps1
-		Send {Down}{Down}{Down}{Down}
-		Send {F5}
-		Send {CtrlDown}r{CtrlUp}
-		return
+	;^n::
+	;	RunWait, powershell.exe -NoLogo -NoProfile -File c:\repos\dotfiles\newsql.ps1
+	;	;Send {Down}{Down}
+	;	;Send {ShiftDown}{End}{ShiftUp}
+	;	return
+	;^+n::
+	;	Run powershell.exe -NoLogo -NoProfile -File c:\repos\recovery\scripts\newsql.ps1
+	;	Send {Down}{Down}{Down}{Down}
+	;	Send {F5}
+	;	Send {CtrlDown}r{CtrlUp}
+	;	return
 
 	; When I switch connections, my mouse is in the way and the wrong dialog box opens, so move the mouse first
 	AppsKey::
@@ -164,12 +162,6 @@ return
 
 ; BEST EVER!! Tab inside of a run-box or open file dialog does what a tab SHOULD do, moves to the next item in the list, not the next button/etc.
 ; So c:\Us{tab} takes me to c:\Users
-#IfWinActive, ahk_exe dsNetworkConnect.exe
-	Tab::
-		Send {Tab}
-		return
-#IfWinActive
-
 #IfWinActive, ahk_class #32770
 	Tab::
 		Send {Down}
@@ -205,12 +197,6 @@ return
 		return
 #IfWinActive
 
-#IfWinActive ahk_exe Radmin.exe
-	AppsKey::
-		Send {AppsKey}
-		return
-#IfWinActive
-
 ; Cherwell sucks a lot too.
 #IfWinActive ahk_exe Trebuchet.App.exe
 	; For example, Alt+F4 takes you to the home screen THE HOME SCREEN! who does this?
@@ -224,7 +210,22 @@ return
 		return
 #IfWinActive
 
+#IfWinActive echelon@team-echelon-ws-scvs-2 - Google Chrome
+    ^w::
+        Send {ctrlDown}e{ctrlup}
+        return
+#IfWinActive
 
+#IfWinActive localhost - Community Edition
+    f5::
+        Send {Esc}{Tab}{Enter}
+        return
+#IfWinActive
+#IfWinActive Couchbase Console
+    f5::
+        Send {Esc}{Tab}{Enter}
+        return
+#IfWinActive
 
 ; Hey, I can vim keybind my mouse! cool
 ; Mouse move in direction h
@@ -281,7 +282,7 @@ return
 ;  else {
 ;	  SysGet, MonitorWorkArea, MonitorWorkArea, 2
 ;	  WinMove,A,,X,0 , , (MonitorWorkAreaBottom/2)
-;  }  
+;  }
 ;return
 ;
 ;; Move window down
