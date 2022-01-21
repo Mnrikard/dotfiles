@@ -1,6 +1,6 @@
 [user]
 	name = Matthew Rikard
-	email = todo@change.email
+	email = mattr@acst.com
 [push]
 	default = current
 [color]
@@ -33,6 +33,9 @@
 	su = submodule update --recursive
 	si = submodule update --init --recursive
 	revertall = !git reset --hard HEAD; git clean -df
-    tobase = "!f(){ git reset --hard HEAD; git clean -df; git fetch -p; headbranch=`git remote show origin | grep 'HEAD branch' | sed 's/.*: //'`; git checkout $headbranch; git pull origin $headbranch; }; f;"
+    tobase = "!f(){ git reset --hard HEAD; git clean -df; git fetch -p; headbranch=`git remote show origin | grep 'HEAD branch' | sed 's/.*: //'`; git checkout $headbranch; git pull origin $headbranch; git si;}; f;"
+    stache = "!f(){ read -p 'Describe this stash: ' descStache; git stash push --include-untracked -m \"$descStache\"; }; f;"
+	opendiff = "!f(){ vim $(git --no-pager diff --name-only master); }; f;"
+	awayfrom = "log --left-right --graph --cherry-pick --oneline"
 [rerere]
 	enabled = 1

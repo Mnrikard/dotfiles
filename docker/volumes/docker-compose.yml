@@ -1,0 +1,146 @@
+version: "3.8"
+
+services:
+  redis:
+    hostname: redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - type: bind
+        source: ~/docker/volumes/data/redis
+        target: /var/lib/redis
+
+  mssql:
+    hostname: sql server
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "1433-1434:1433-1434"
+    volumes:
+      - type: bind
+        source: ~/docker/volumes/data/mssql
+        target: /var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=acsdev123!
+      - MSSQL_PID=Express
+
+  psql:
+    hostname: postgres
+    image: postgres:12.4
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres # allows the current PGAdmin setup to work without any changes
+      - POSTGRES_PASSWORD=acsdev123!
+    volumes:
+      - type: bind
+        source: ~/docker/volumes/data/psql
+        target: /var/lib/postgresql/data
+    restart: always
+  zookeeper:
+    hostname: zookeeper
+    image: zookeeper:3.4.9
+    ports:
+      - "2181:2181"
+    environment:
+        ZOO_MY_ID: 1
+        ZOO_PORT: 2181
+        ZOO_SERVERS: server.1=zookeeper:2888:3888
+  kafka2:
+    image: confluentinc/cp-kafka:5.3.0
+    hostname: kafka2
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka2:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 4
+    volumes:
+      - ~/docker/volumes/data/kafka2/data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+  localstack:
+    container_name: "localstack_main"
+    image: localstack/localstack
+    ports:
+      - "8080-8081:8080-8081"
+      - "4566-4620:4566-4620"
+      - "12121:12121"
+    environment:
+      - EDGE_PORT=4576
+      - SERVICES=s3,sqs
+      - DEFAULT_REGION=us-east-1
+      - LOCALSTACK_HOSTNAME=localhost
+      - LOCALSTACK_SERVICES=s3,sqs
+      - TEST_AWS_ACCOUNT_ID=000000000000
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOST_TMP_FOLDER=/tmp/localstack
+      - PORT_WEB_UI=8081
+    volumes:
+      - type: bind
+        source: /tmp/localstack
+        target: /tmp/localstack
+      - type: bind
+        source: ./localstack.sh
+        target: /docker-entrypoint-initaws.d/make-s3.sh
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - type: bind
+        source: ./data/elasticsearch
+        target: /opt/elasticsearch/var
+    ports:
+      - 9203:9200
+      - 9300:9300
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.4.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+        #  couchbase:
+        #    hostname: couchbase
+        #    image: couchbase:enterprise-6.6.3
+        #    ports:
+        #      - "8091:8091"   # Couchbase Web console, REST/HTTP interface
+        #      - "8092:8092"   # Views, queries, XDCR
+        #      - "8093:8093"   # Query services (4.0+)
+        #      - "8094:8094"   # Full-text Search (4.5+)
+        #      - "11207:11207" # Smart client library data node access (SSL)
+        #      - "11210:11210" # Smart client library/moxi data node access
+        #      - "11211:11211" # Legacy non-smart client library data node access
+        #      - "18091:18091" # Couchbase Web console, REST/HTTP interface (SSL)
+        #      - "18092:18092" # Views, query, XDCR (SSL)
+        #      - "18093:18093" # Query services (SSL) (4.0+)
+        #      - "18094:18094" # Full-text Search (SSL) (4.5+)
+        #    volumes:
+        #      - type: bind
+        #        source: ./data/couchbase
+        #        target: /opt/couchbase/var
