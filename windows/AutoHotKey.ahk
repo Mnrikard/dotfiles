@@ -10,18 +10,12 @@ SetTitleMatchMode, 2
 ::txiso::set transaction isolation level read uncommitted
 ::lable::label
 ::vim fzf::vim $(fzf)
-
-
-;#IfWinActive ahk_exe firefox.exe
-;	; so FireFox say "tab" means move to the next item... but I want it to send the tab char
-;	Tab::
-;		ClipboardSaved := ClipboardAll  ; Backup clipboard contents.
-;		Clipboard := "	"  ; Tab character (you can also use `t).
-;		Send ^v
-;		Clipboard := ClipboardSaved  ; Restore.
-;		ClipboardSaved =  ; Free the memory.
-;	return
-;#IfWinActive
+::(TM)::™
+::(R)::®
+::(C)::©
+::``e::é
+::udpate::update
+::rmslinux::I'd just like to interject for a moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX.
 
 ; ^ = ctrl
 ; + = shift
@@ -30,8 +24,31 @@ SetTitleMatchMode, 2
 ; & = key glue
 ; http://ahkscript.org/docs/Hotkeys.htm
 
+; run FTS index
+#IfWinActive Realm Service Jobs - Support - Google Chrome
+	^m::
+		Send {Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Tab}
+		Send FTS Sync{Tab}{Tab}
+		Send FTS Sync{Tab}{Tab}{Tab}{Tab}{Tab}
+
+		ControlClick Add Parameter, Realm Service Jobs - Support - Google Chrome
+		Send {ShiftDown}{Tab}{Tab}{ShiftUp}
+		Send siteId{Tab}
+		Send {CtrlDown}v{CtrlUp}{Tab}
+		Sleep 2000
+
+		ControlClick Add Parameter, Realm Service Jobs - Support - Google Chrome
+		Send {ShiftDown}{Tab}{Tab}{ShiftUp}
+		Send refreshAll{Tab}
+		Send true{Tab}
+		Sleep 2000
+
+#IfWinActive
+
+
 ; caps lock, more like craps lock, amiright?
 CapsLock::
+    Send #{Tab}
 	Return
 
 ; open help page CTrl+alt+shift+H
@@ -44,7 +61,7 @@ Return
 XButton1::
 	loop {
 		MouseClick,WheelRight,,,10,0,D,R
-		GetKeyState, T, XButton1
+		GetKeyState, T, XButton2
 		If T=U
 			Break
 	}
@@ -53,7 +70,7 @@ Return
 XButton2::
 	loop {
 		MouseClick,WheelLeft,,,10,0,D,R
-		GetKeyState, T, XButton2
+		GetKeyState, T, XButton1
 		If T=U
 			Break
 	}
@@ -100,6 +117,11 @@ ClearMouse(){
 	ClearMouse()
 Return
 
+; Ctrl+Shift+*I =>move the mouse to the cursor
+^+I::
+	MouseMove, A_CaretX, A_CaretY, 0
+Return
+
 ; Middle mouse button is annoying, kill it
 MButton::
 
@@ -125,20 +147,17 @@ return
 
 ; SQL Server: I have the bad habit of opening a thousand files over time and never closing them, this is to correct MY bad behavior, not SSMS's
 #IfWinActive ahk_exe Ssms.exe
-	;^n::
-	;	Run, open "c:\SQL\TopTen\new.sql"
-	;	return
-	;^n::
-	;	RunWait, powershell.exe -NoLogo -NoProfile -File c:\repos\dotfiles\newsql.ps1
-	;	;Send {Down}{Down}
-	;	;Send {ShiftDown}{End}{ShiftUp}
-	;	return
-	;^+n::
-	;	Run powershell.exe -NoLogo -NoProfile -File c:\repos\recovery\scripts\newsql.ps1
-	;	Send {Down}{Down}{Down}{Down}
-	;	Send {F5}
-	;	Send {CtrlDown}r{CtrlUp}
-	;	return
+	^n::
+		RunWait, powershell.exe -NoLogo -NoProfile -File c:\gitrepos\dotfiles\newsql.ps1
+		;Send {Down}{Down}
+		;Send {ShiftDown}{End}{ShiftUp}
+		return
+	^+n::
+		Run powershell.exe -NoLogo -NoProfile -File c:\gitrepos\dotfiles\newsql.ps1
+		Send {Down}{Down}{Down}{Down}
+		Send {F5}
+		Send {CtrlDown}r{CtrlUp}
+		return
 
 	; When I switch connections, my mouse is in the way and the wrong dialog box opens, so move the mouse first
 	AppsKey::
@@ -197,22 +216,12 @@ return
 		return
 #IfWinActive
 
-; Cherwell sucks a lot too.
-#IfWinActive ahk_exe Trebuchet.App.exe
-	; For example, Alt+F4 takes you to the home screen THE HOME SCREEN! who does this?
-	!f4::
-		Send {AltDown}{Space}{AltUp}c
-		return
-	; There's an actual button on my keyboard with the word HOME on it! Why not make that take me to the home screen?!
-	; answer: because I keep hitting it while inside of a text box, and it doesn't do what I need it to in that scenario
-	^home::
-		Send !v n h
-		return
-#IfWinActive
-
-#IfWinActive echelon@team-echelon-ws-scvs-2 - Google Chrome
+#IfWinActive echelon@team-echelon
     ^w::
         Send {ctrlDown}e{ctrlup}
+        return
+    ^n::
+        Send {ctrlDown}m{ctrlup}
         return
 #IfWinActive
 
@@ -227,77 +236,56 @@ return
         return
 #IfWinActive
 
-; Hey, I can vim keybind my mouse! cool
-; Mouse move in direction h
-;^+h::
-;	loop {
-;		MouseMove, -20, 0, 2, R
-;		GetKeyState, T, h
-;		If T=U
-;			Break
-;	}
-;Return
 
-; Mouse move in direction l
-;^+l::
-;	loop {
-;		MouseMove, 20, 0, 2, R
-;		GetKeyState, T, h
-;		If T=U
-;			Break
-;	}
-;Return
+; VOLUME
+#Warn,UseUnsetLocal
+#NoEnv
+#SingleInstance force
+SetBatchLines,-1
 
-; Mouse move in direction j
-;^+j::
-;	loop {
-;		MouseMove, 0, 20, 2, R
-;		GetKeyState, T, h
-;		If T=U
-;			Break
-;	}
-;Return
+SoundGet,Volume
+Volume:=Round(Volume)
+TrayTip:="CtrlAlt+UpArrow or CtrlAlt+DownArrow to adjust volume" . "Current Volume=" . Volume
+TrayIconFile:=A_WinDir . "\System32\DDORes.dll" ; get tray icon from DDORes.dll
+TrayIconNum:="-2032" ; use headphones as tray icon (icon 2032 in DDORes)
+Menu,Tray,Tip,%TrayTip%
+Menu,Tray,Icon,%TrayIconFile%,%TrayIconNum%
+Return
 
-; Mouse move in direction k
-;^+k::
-;	loop {
-;		MouseMove, 0, -20, 2, R
-;		GetKeyState, T, h
-;		If T=U
-;			Break
-;	}
-;Return
+^!Down::
+SetTimer,SliderOff,3000
+SoundSet,-1
+Gosub,DisplaySlider
+Return
 
-; Move window up
-;+#Up::
-;  WinGetPos,X,Y,W,H,A,,,
-;  WinMaximize
-;  WinGetPos,TX,TY,TW,TH,ahk_class Shell_TrayWnd,,,
-;
-;  ; if this is greater than 1, we're on the secondary (right) monitor. This means the center of the active window is a positive X coordinate
-;  if ( X + W/2 > 0 ) {
-;	  SysGet, MonitorWorkArea, MonitorWorkArea, 1
-;	  WinMove,A,,X,0 , , (MonitorWorkAreaBottom/2)
-;  }
-;  else {
-;	  SysGet, MonitorWorkArea, MonitorWorkArea, 2
-;	  WinMove,A,,X,0 , , (MonitorWorkAreaBottom/2)
-;  }
-;return
-;
-;; Move window down
-;+#Down::
-;  WinGetPos,X,Y,W,H,A,,,
-;  WinMaximize
-;  WinGetPos,TX,TY,TW,TH,ahk_class Shell_TrayWnd,,,
-;
-;  ; if this is greater than 1, we're on the secondary (right) monitor. This means the center of the active window is a positive X coordinate
-;  if ( X + W/2 > 0 ) {
-;	  SysGet, MonitorWorkArea, MonitorWorkArea, 1
-;	  WinMove,A,,X,MonitorWorkAreaBottom/2 , , (MonitorWorkAreaBottom/2)
-;  }
-;  else {
-;	  SysGet, MonitorWorkArea, MonitorWorkArea, 2
-;	  WinMove,A,,X,MonitorWorkAreaBottom/2 , , (MonitorWorkAreaBottom/2)
-;  }
-;return
+^!Up::
+SetTimer,SliderOff,3000
+SoundSet,+1
+Gosub,DisplaySlider
+Return
+
+SliderOff:
+Progress,Off
+Return
+
+DisplaySlider:
+SoundGet,Volume
+Volume:=Round(Volume)
+Progress,%Volume%,%Volume%,Volume,Adjust Volume
+TrayTip:="CtrlAlt+LeftArrow or CtrlAlt+RightArrow to adjust volume" . "Current Volume=" . Volume
+Menu,Tray,Tip,%TrayTip%
+Return
+
+DetectHiddenWindows, On
+Script_Hwnd := WinExist("ahk_class AutoHotkey ahk_pid " DllCall("GetCurrentProcessId"))
+DetectHiddenWindows, Off
+; Register shell hook to detect flashing windows.
+DllCall("RegisterShellHookWindow", "uint", Script_Hwnd)
+OnMessage(DllCall("RegisterWindowMessage", "str", "SHELLHOOK"), "ShellEvent")
+;...
+ShellEvent(wParam, lParam) {
+    if (wParam = 0x8006) ; HSHELL_FLASH
+    {   ; lParam contains the ID of the window which flashed:
+        WinActivate, ahk_id %lParam%
+    }
+}
