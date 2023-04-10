@@ -16,17 +16,12 @@ Archive-Sql
 Write-Host "Name this file: " -NoNewLine -ForegroundColor Green
 $fname = (Read-Host)
 $fullname = "c:\SQL\EveryDay\$fname.sql"
-while (Test-Path $fullname)
+if (!(Test-Path $fullname))
 {
-	Write-Host "File of this name already exists, use another name:`r`n>" -NoNewLine -ForegroundColor Red
-	$fname = (Read-Host)
-	$fullname = "c:\sql\EveryDay\$fname.sql"
+	$content = "if 1=1 begin; print 'do not execute an entire file, select a portion and execute that'; end else begin;`r`n`r`nselect 1`r`n`r`nend;"
+
+	New-Item -ItemType File $fullname
+	Set-Content -Path $fullname -Value $content -Encoding UTF8
 }
 
-$content = "if 1=1 begin; print 'do not execute an entire file, select a portion and execute that'; end else begin;`r`n`r`nselect 1`r`n`r`nend;"
-
-New-Item -ItemType File $fullname
-Set-Content -Path $fullname -Value $content -Encoding UTF8
-
 explorer.exe $fullname
-

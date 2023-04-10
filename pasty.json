@@ -1,7 +1,7 @@
 {
 	"tabString": "\t",
-	"pluginsDirectory": "c:\\users\\mrikard\\pastyPlugins",
-	"localStyleSheet": "c:\\users\\mrikard\\gpasty.css",
+	"pluginsDirectory": "c:\\users\\mattr\\pastyPlugins",
+	"localStyleSheet": "c:\\users\\mattr\\gpasty.css",
 	"savedCommands": [
 		{
 			"name": "hamburger",
@@ -11,6 +11,49 @@
 					"name": "settext",
 					"args": [
 						"🍔"
+					]
+				}
+			]
+		},
+		{
+			"name": "gimmetab",
+			"description": "its a tab",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"\t"
+					]
+				}
+			]
+		},
+		{
+			"name": "gojira",
+			"description": "creates a jira link with parameters",
+			"commands": [
+				{
+					"name": "settext",
+					"args": [
+						"https://acstchms.atlassian.net/browse/{{TicketID}}"
+					]
+				}
+			],
+			"parameters": [
+				{
+					"name": "TicketID",
+					"defaultValue": null
+				}
+			]
+		},
+		{
+			"name": "jira",
+			"description": "creates a jira link",
+			"commands": [
+				{
+					"name": "rep",
+					"args": [
+						"[\\d\\D]+",
+						"https://acstchms.atlassian.net/browse/$&"
 					]
 				}
 			]

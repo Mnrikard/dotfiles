@@ -4,17 +4,25 @@ SetTitleMatchMode, 2
 ;#InstallKeybdHook
 ;#InstallMouseHook
 
-::uuu::UniqueIdentifier
 ::recieve::receive
-::teh ::the 
-::txiso::set transaction isolation level read uncommitted
-::lable::label
-::vim fzf::vim $(fzf)
-::(TM)::™
-::(R)::®
-::(C)::©
-::``e::é
+::teh::the
 ::udpate::update
+::lable::label
+
+::uuu::UniqueIdentifier
+::txiso::set transaction isolation level read uncommitted
+::vim fzf::vim $(fzf)
+
+::(TM)::™
+
+::(R)::®
+
+::(C)::©
+
+::e'::é
+
+::(cent)::¢
+
 ::rmslinux::I'd just like to interject for a moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX.
 
 ; ^ = ctrl
@@ -24,27 +32,25 @@ SetTitleMatchMode, 2
 ; & = key glue
 ; http://ahkscript.org/docs/Hotkeys.htm
 
-; run FTS index
-#IfWinActive Realm Service Jobs - Support - Google Chrome
-	^m::
-		Send {Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Tab}
-		Send FTS Sync{Tab}{Tab}
-		Send FTS Sync{Tab}{Tab}{Tab}{Tab}{Tab}
+; edit this script
+^!+e:: Run, "gvim" "C:\repos\windot\windows\AutoHotKey.ahk"
 
-		ControlClick Add Parameter, Realm Service Jobs - Support - Google Chrome
-		Send {ShiftDown}{Tab}{Tab}{ShiftUp}
-		Send siteId{Tab}
-		Send {CtrlDown}v{CtrlUp}{Tab}
-		Sleep 2000
+; make a window always on top
+^SPACE::  Winset, Alwaysontop, , A
 
-		ControlClick Add Parameter, Realm Service Jobs - Support - Google Chrome
-		Send {ShiftDown}{Tab}{Tab}{ShiftUp}
-		Send refreshAll{Tab}
-		Send true{Tab}
-		Sleep 2000
+; un-trash lists in doc
+^#+j:: Send {end}{delete}{shiftdown}{enter}{shiftup}
 
+;Phone Link lets me check/send text messages from my phone
+;text messages accept enter as "send" and Ctrl+Enter as new line.  I'd like to switch that
+#IfWinActive Phone Link
+	^Enter::
+		Send {Enter}
+		Return
+	Enter::
+		Send {CtrlDown}{Enter}{CtrlUp}
+		Return
 #IfWinActive
-
 
 ; caps lock, more like craps lock, amiright?
 CapsLock::
@@ -60,7 +66,7 @@ Return
 ;remap forward/back buttons on mouse
 XButton1::
 	loop {
-		MouseClick,WheelRight,,,10,0,D,R
+		MouseClick,WheelRight,,,5,0,D,R
 		GetKeyState, T, XButton2
 		If T=U
 			Break
@@ -69,7 +75,7 @@ Return
 
 XButton2::
 	loop {
-		MouseClick,WheelLeft,,,10,0,D,R
+		MouseClick,WheelLeft,,,5,0,D,R
 		GetKeyState, T, XButton1
 		If T=U
 			Break
@@ -146,25 +152,25 @@ return
 ;Return
 
 ; SQL Server: I have the bad habit of opening a thousand files over time and never closing them, this is to correct MY bad behavior, not SSMS's
-#IfWinActive ahk_exe Ssms.exe
-	^n::
-		RunWait, powershell.exe -NoLogo -NoProfile -File c:\gitrepos\dotfiles\newsql.ps1
-		;Send {Down}{Down}
-		;Send {ShiftDown}{End}{ShiftUp}
-		return
-	^+n::
-		Run powershell.exe -NoLogo -NoProfile -File c:\gitrepos\dotfiles\newsql.ps1
-		Send {Down}{Down}{Down}{Down}
-		Send {F5}
-		Send {CtrlDown}r{CtrlUp}
-		return
-
-	; When I switch connections, my mouse is in the way and the wrong dialog box opens, so move the mouse first
-	AppsKey::
-		ClearMouse()
-		Send {AppsKey}
-		return
-#IfWinActive
+;#IfWinActive ahk_exe Ssms.exe
+;	^n::
+;		RunWait, powershell.exe -NoLogo -NoProfile -File c:\repos\windot\windows\newsql.ps1
+;		;Send {Down}{Down}
+;		;Send {ShiftDown}{End}{ShiftUp}
+;		return
+;	^+n::
+;		Run powershell.exe -NoLogo -NoProfile -File c:\repos\windot\windows\newsql.ps1
+;		Send {Down}{Down}{Down}{Down}
+;		Send {F5}
+;		Send {CtrlDown}r{CtrlUp}
+;		return
+;
+;	; When I switch connections, my mouse is in the way and the wrong dialog box opens, so move the mouse first
+;	AppsKey::
+;		ClearMouse()
+;		Send {AppsKey}
+;		return
+;#IfWinActive
 
 #IfWinActive ahk_exe SoapUI-5.5.0.exe
 	; F5 in SoapUI is a command to "destroy everything without a backup", so let's not do that.
