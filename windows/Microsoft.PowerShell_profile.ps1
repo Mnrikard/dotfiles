@@ -1,28 +1,44 @@
-﻿#Import-Module PsGet
+#Import-Module PsGet
 #Import-Module pscx
 Import-Module posh-git
+Import-Module posh-sshell
 Import-Module PSReadline
+
+Start-SSHAgent
 
 #PSReadLine\Set-PSReadlineOption -EditMode Vi
 
 Set-Alias -Name ~ -Value $env:UserProfile
-Set-Alias -Name pandoc -Value "C:\Program Files\Pandoc\pandoc.exe"
+Set-Alias -Name cd -Value pushd -Option AllScope
+Set-Alias -Name which -Value Get-Command
+#Set-Alias -Name pandoc -Value "C:\Program Files\Pandoc\pandoc.exe"
 
 Set-PSReadlineOption -ShowToolTips -BellStyle Visual
-
-$corec = "http://sourcecontrol/svn/Gis/Development/Core%20Components"
-$corea = "http://sourcecontrol/svn/Gis/Development/Core%20Applications"
-$staticref = "http://sourcecontrol/svn/Gis/Development/StaticReferences"
-
-$env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\bin"
-
-$global:GitPromptSettings.EnableWindowTitle = $null
-$Host.UI.RawUI.WindowTitle = "Powershell"
+Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
 # load scripts from directory in profile
-Get-ChildItem ('c:\cs\tools\PoshScripts') | Where `
-{ $_.Name -notlike '__*' -and $_.Name -like '*.ps1'} | ForEach `
-{ . $_.FullName }
+Get-ChildItem ('c:\cs\tools\PoshScripts') | Where { $_.Name -notlike '__*' -and $_.Name -like '*.ps1'} | ForEach { . $_.FullName }
+
+function Refresh-Path()
+{
+	$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User") 
+}
+
+function Which-Port($portNum)
+{
+	Get-Process -Id (Get-NetTCPConnection -LocalPort $portNum).OwningProcess
+}
+
+function Open($app)
+{
+    switch ($app.ToLower())
+    {
+        "vs" { & "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\devenv.exe" }
+        "iis" { & "c:\Windows\system32\inetsrv\InetMgr.exe" }
+        "vi" { & "C:\tools\neovim\nvim-win64\bin\nvim-qt.exe" }
+        "ssrs" { & "C:\Program Files\Microsoft SQL Server Reporting Services\Shared Tools\RSConfigTool.exe" }
+    }
+}
 
 function lst()
 {
@@ -32,16 +48,49 @@ function lst()
 	cls
 }
 
+function trace-listener { & C:\Projects\Realm\Tools\TraceListener\TraceListenerCore\bin\Debug\net5.0\TraceListenerCore.exe }
+
 function base64($fileName)
 {
 	return [Convert]::ToBase64String([IO.File]::ReadAllBytes($fileName))
 }
 
+function wwebpack
+{
+    & webpack --watch --mode=development
+}
+
+function cfg($set) {
+	if ($set -eq "set") {
+		. $PROFILE
+	} else {
+		nvim $PROFILE
+	}
+}
 
 function exhere()
 {
 	. explorer.exe $PWD
 }
+
+function gittobase()
+{
+    Write-Host "git reset --hard HEAD" -ForegroundColor Cyan
+    git reset --hard HEAD
+    Write-Host "git clean -df" -ForegroundColor Cyan
+    git clean -df
+    Write-Host "git fetch -p" -ForegroundColor Cyan
+    git fetch -p
+    Write-Host "headbranch=`$(git remote show origin | select-string 'HEAD branch').replace('.*: ','')"
+    $headbranch=$(git remote show origin | select-string 'HEAD branch').ToString().replace('HEAD branch: ', '').Trim()
+    Write-Host "git checkout $headbranch" -ForegroundColor Cyan
+    git checkout $headbranch
+    Write-Host "git pull origin $headbranch" -ForegroundColor Cyan
+    git pull origin $headbranch
+    Write-Host "git si" -ForegroundColor Cyan
+    git si
+}
+
 
 function SSL-Toggle
 {
@@ -58,6 +107,10 @@ function toWord
 		[string] $md = (Read-Host "Markdown file")
 	)
 	& pandoc $md -f markdown -t docx -o "$md.docx"
+}
+
+function msbuild {
+& "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe" $args
 }
 
 function dnbuild{
@@ -145,54 +198,51 @@ function Execute-OrVim($file, $server){
 	}
 }
 
-function nunit($path)
-{
-	& 'C:\Program Files\NUnit\nunit3-console.exe' $path
-}
-
 function tl {
 	& 'c:\cs\tools\tl.ps1'
 }
 
-function gadd {
-	& git add -A
-}
-
-function gcomm
-{
-	git commit $args
-}
-
-function gstat {
-	& git status
-}
-
-function gpull {
-	$branch = (git rev-parse --abbrev-ref HEAD)
-	& git pull origin $branch --rebase
-}
-
-function gpush {
-	$branch = (git rev-parse --abbrev-ref HEAD)
-	& git push origin $branch
-	if ([System.Text.RegularExpressions.Regex]::IsMatch((git remote show),"github", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
-		& git push github $branch
-	}
-}
-
-function gfetch {
-	git fetch -p
-}
 
 function mklink ($link, $target){
 	cmd /c mklink $link $target
 }
 
 
-$env:home = "c:\Users\mrikard\"
+$env:home = "c:\Users\mattr\"
 Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
 
-function promptWrite($txt,$color,$backColor, $nextBack){
+
+function Compare-Folders ($folder1, $folder2) {
+	Get-ChildItem $folder1 -Recurse | Foreach-Object {
+		if($_.PSIsContainer) {
+			return
+		}
+		$hash = (Get-FileHash $_.FullName).Hash;
+		$fold2file = $_.FullName.replace($folder1,$folder2);
+		if ((Test-Path -Path $fold2file -PathType Leaf) -eq $False) {
+			Write-Host "$fold2file does not exist" -ForegroundColor Red
+			return
+		}
+		$hash2 = (Get-FileHash $fold2file).Hash;
+		if($hash -ne $hash2) {
+			Write-Host "$($_.FullName) does not match $fold2file" -ForegroundColor Red
+		} else {
+			Write-Host "$($_.FullName) matches $fold2file" -ForegroundColor Cyan
+		}
+	}
+
+	Get-ChildItem $folder2 -Recurse | Foreach-Object {
+		if($_.PSIsContainer) {
+			return
+		}
+		$fold2file = $_.FullName.replace($folder2,$folder1);
+		if ((Test-Path -Path $fold2file -PathType Leaf) -eq $False) {
+			Write-Host "$fold2file does not exist" -ForegroundColor Red
+		}
+	}
+}
+
+function promptWriteArrow($txt,$color,$backColor, $nextBack){
 	$rightArrow = ([char]0xe0b0)
 	Write-Host $txt -ForegroundColor $color -BackgroundColor $backColor -NoNewLine;
 	Write-Host $rightArrow -ForegroundColor $backColor -BackgroundColor $nextBack -NoNewLine;
@@ -202,41 +252,24 @@ function promptWrite($txt,$color,$backColor, $nextBack){
 function global:prompt {
 	$lastStat = $?
 	$realLASTEXITCODE = $LASTEXITCODE
-	# $? gets reset after each execution, whereas $LASTEXITCODE only gets updated when you run a command (so echo doesn't affect it)
-	$time = "$(Get-Date -format HH:mm:ss.fff)"
-		promptWrite $time White Cyan White
 
-
-		$loc = Get-Location
-		promptWrite $loc Blue White DarkYellow
-		promptWrite " P O W E R S H E L L " Black DarkYellow Black
-# Reset color, which can be messed up by Enable-GitColors
-#		$Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
-		Write-VcsStatus
-		Write-Host " "
-		if($lastStat){
-			promptWrite "✓" Black White Blue
-		} else {
-			promptWrite "x" Black Red Blue
-		}
-		promptWrite "PS ${$lastStat}$" White Blue Black
-		$global:LASTEXITCODE = $realLASTEXITCODE
-		return " "
-}
-
-function Compare-Folders ($folder1, $folder2) {
-	Get-ChildItem $folder1 | Foreach-Object {
-		$name = $_.Name;
-		$hash = (Get-FileHash $_.FullName).Hash;
-		$fold2file = "$folder2/$name";
-		$hash2 = (Get-FileHash $fold2file).Hash;
-		if($hash -ne $hash2) {
-			Write-Host "$name mismatch";
-		}
+	$prompt = ""
+	$prompt += Write-Prompt "`n╭─$(Get-Date -format HH:mm:ss) " -ForegroundColor White
+	$prompt += Write-Prompt $(Get-Location) -ForegroundColor 0xFFA500
+	$prompt += Write-VcsStatus
+	$prompt += Write-Prompt "`n╰─"
+	if ($lastStat) {
+		$prompt += Write-Prompt 😎️
+	} else {
+		$prompt += Write-Prompt 💀
 	}
+
+	$prompt += Write-Prompt " >" -ForegroundColor Cyan
+	$global:LASTEXITCODE = $realLASTEXITCODE
+	return $prompt
 }
 
-#& 'C:\repos\recovery\poshSSH.ps1'
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\paradox.omp.json" | Invoke-Expression
 
 Pop-Location
 #Start-SshAgent -Quiet
@@ -246,6 +279,8 @@ $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 if (Test-Path($ChocolateyProfile)) {
   Import-Module "$ChocolateyProfile"
 }
+
+figlet -f smslant MP
 
 
 # SIG # Begin signature block
@@ -273,5 +308,6 @@ if (Test-Path($ChocolateyProfile)) {
 # aNFuswT+5Psr2/dRNWiK77Xhq7tTc4n/x4LCpeZTuIji3AQIh80GT1TtzyMo97FB
 # /1Y7Vzvai5XyQVFGJV8GWpcAJOLKYIo=
 # SIG # End signature block
+
 
 

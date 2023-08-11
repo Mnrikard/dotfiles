@@ -11,18 +11,19 @@
 	ui = true
 	pager = true
 [core]
-	editor = vim
-	autocrlf = false
-	safecrlf = false
-	excludesfile = ~/.gitignore
+	editor = nvim
+	autocrlf = true
+	safecrlf = warn
+	excludesfile = c:\\users\\mattr\\.gitignore
+	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
 [merge]
-	tool = vimdiff
+	tool = nvimdiff
 	conflictstyle = diff3
 [diff]
-	tool = vimdiff
+	tool = nvimdiff
 	conflictstyle = diff2
 [http]
-	sslVerify = false
+	sslVerify = true
 [winUpdater]
 	recentlySeenVersion = 2.20.1.windows.1
 [url "git@github.com:acst/"]
@@ -33,9 +34,19 @@
 	su = submodule update --recursive
 	si = submodule update --init --recursive
 	revertall = !git reset --hard HEAD; git clean -df
-    tobase = "!f(){ git reset --hard HEAD; git clean -df; git fetch -p; headbranch=`git remote show origin | grep 'HEAD branch' | sed 's/.*: //'`; git checkout $headbranch; git pull origin $headbranch; git si;}; f;"
+	gettrunk = !git remote show origin | grep 'HEAD branch' | sed 's/.*: //g'
+    tobaseold = "!f(){ git reset --hard HEAD; git clean -df; git fetch -p; master=$(git gettrunk); git checkout $master; git pull origin $master; git si;}; f;"
+    tobase = "!f(){ echo \"resetting current branch\";git reset --hard HEAD; git clean -df; git fetch -p; echo \"git checkout $(git gettrunk)\";git checkout $(git gettrunk); git pull origin $(git gettrunk); git si;}; f;"
+
     stache = "!f(){ read -p 'Describe this stash: ' descStache; git stash push --include-untracked -m \"$descStache\"; }; f;"
-	opendiff = "!f(){ vim $(git --no-pager diff --name-only master); }; f;"
+	opendiff = "!f(){ nvim $(git --no-pager diff --name-only $(git gettrunk)); }; f;"
 	awayfrom = "log --left-right --graph --cherry-pick --oneline"
-[rerere]
-	enabled = 1
+	bindingredirect = "!f(){ for file in $(git diff --name-only | grep config);do;git diff -w $file;echo Restore:[yN];read resto;if [[ $resto == y ]];then;git restore $file;fi;done; }; f;"
+	cleanbranches = "!f(){ git branch --merged $(git gettrunk) | grep --invert-match \"$(git gettrunk)\" | xargs -n 1 -r git branch -d; }; f;"
+[auto]
+	crlf = true
+[safe]
+	directory = c:/Users/mattr/.vim/bundle/Vundle.vim
+	directory = c:\\Users\\mattr\\.vimbundle/Vundle.vim
+	directory = c:/repos/BatchManager
+	directory = C:\\repos\\BatchManager\\
