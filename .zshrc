@@ -6,7 +6,7 @@ alias gsta="git status"
 alias gsql="git rm ChangeScripts/Rollback/*/*.sql;git rm ChangeScripts/Upgrade/*/*.sql"
 alias githere="git --no-pager"
 alias FZF="fzf --preview 'batcat --style=numbers --color=always {} | head -500'"
-alias e="vim"
+alias e="nvim"
 alias bat="batcat"
 alias gohome="ssh mattr@mnrikard.myddns.rocks -p 22202"
 alias goplay="ssh echelon@team-echelon-ws-scvs-2.dev.ac.st"
@@ -23,9 +23,7 @@ alias vim="nvim"
 alias python="python3"
 alias gh="history | fzf"
 
-alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
-
-
+alias dotfiles="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
 
 export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
 
@@ -226,4 +224,4 @@ alias ls="exa --group-directories-first -a -L 1 -s name --git --icons"
 clear
 #figlet -o -f slant ACST | lolcat
 #toilet -f pagga ACST | lolcat
-toilet -t -f smslant ACSTechnologies | lolcat -S 100
+figlet -t -f smslant "I use Arch BTW" | lolcat -S 100

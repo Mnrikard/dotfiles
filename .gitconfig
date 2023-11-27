@@ -1,6 +1,6 @@
 [user]
 	name = Matthew Rikard
-	email = mattr@acst.com
+	email = mnrikard@gmail.com
 [push]
 	default = current
 [color]
@@ -12,10 +12,7 @@
 	pager = true
 [core]
 	editor = nvim
-	autocrlf = true
-	safecrlf = warn
-	excludesfile = c:\\users\\mattr\\.gitignore
-	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
+	excludesfile = ~/.gitignore
 [merge]
 	tool = nvimdiff
 	conflictstyle = diff3
@@ -43,10 +40,3 @@
 	awayfrom = "log --left-right --graph --cherry-pick --oneline"
 	bindingredirect = "!f(){ for file in $(git diff --name-only | grep config);do;git diff -w $file;echo Restore:[yN];read resto;if [[ $resto == y ]];then;git restore $file;fi;done; }; f;"
 	cleanbranches = "!f(){ git branch --merged $(git gettrunk) | grep --invert-match \"$(git gettrunk)\" | xargs -n 1 -r git branch -d; }; f;"
-[auto]
-	crlf = true
-[safe]
-	directory = c:/Users/mattr/.vim/bundle/Vundle.vim
-	directory = c:\\Users\\mattr\\.vimbundle/Vundle.vim
-	directory = c:/repos/BatchManager
-	directory = C:\\repos\\BatchManager\\
